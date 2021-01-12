@@ -9,7 +9,7 @@ class Net(Module):
 
         self.cnn_layers = Sequential(
             # Defining a 2D convolution layer
-            Conv2d(1, 4, kernel_size=3, stride=1, padding=1),
+            Conv2d(3, 4, kernel_size=3, stride=1, padding=1),
             BatchNorm2d(4),
             ReLU(inplace=True),
             MaxPool2d(kernel_size=2, stride=2),
@@ -21,7 +21,9 @@ class Net(Module):
         )
 
         self.linear_layers = Sequential(
-            Linear(4 * 7 * 7, 10)
+            Linear(4 * 64 * 64, 10),
+            ReLU(),
+            Linear(10, 2)
         )
 
     # Defining the forward pass    
