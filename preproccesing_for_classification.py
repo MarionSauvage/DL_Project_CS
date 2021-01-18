@@ -32,19 +32,18 @@ class BrainMriDataset(Dataset):
         return len(self.df)
     
     def __getitem__(self, idx):
-        image = cv2.imread(self.df.iloc[idx, 1])
+        image = cv2.imread(self.df.iloc[idx, 0])
         augmented_img = self.transforms(image)
         return augmented_img
 
 
 def get_train_test_val_sets(global_dataframe):
-    \"\"\"Prepare dataset
-    
+    """Prepare dataset
     Keyword arguments:
     global_dataframe -- given by the "load_dataset" function
-    Return: train, test, val sets
-    \"\"\"
-    df=global_dataframe[['img_path','tumor']]
+    Return: train, test, val sets loaders 
+    """
+    df=global_dataframe[['image_path','tumor']]
     train_df, test_df = train_test_split(df, stratify=df.tumor, test_size=0.15, random_state=42)
     train_df = train_df.reset_index(drop=True)
     test_df = test_df.reset_index(drop=True)
@@ -56,7 +55,7 @@ def get_train_test_val_sets(global_dataframe):
     print(f"Train: {train_df.shape} \nVal: {val_df.shape} \nTest: {test_df.shape}")
     
     data_transforms = transforms.Compose([
-        transforms.Resize([224, 224]),
+        # transforms.Resize([224, 224]),
         transforms.ToTensor(),
         #transforms.Normalize(mean=mean, std=std)
     ])
@@ -71,3 +70,4 @@ def get_train_test_val_sets(global_dataframe):
     #test
     test_dataset = BrainMriDataset(df=test_df, transforms=data_transforms)
     test_dataloader = DataLoader(test_dataset, batch_size=26, num_workers=4, shuffle=True)
+    return train_dataloader,test_dataloader,val_dataloader
