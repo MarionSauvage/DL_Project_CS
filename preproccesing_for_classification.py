@@ -22,6 +22,20 @@ import torchvision.transforms as T
 import torch
 import torch.nn as nn
 
+# class BrainMriDataset(Dataset):
+#     def __init__(self, df, transforms):
+        
+#         self.df = df
+#         self.transforms = transforms
+        
+#     def __len__(self):
+#         return len(self.df)
+    
+#     def __getitem__(self, idx):
+#         image = cv2.imread(self.df.iloc[idx, 0])
+#         augmented_img = self.transforms(image)
+#         return augmented_img
+
 class BrainMriDataset(Dataset):
     def __init__(self, df, transforms):
         
@@ -32,18 +46,20 @@ class BrainMriDataset(Dataset):
         return len(self.df)
     
     def __getitem__(self, idx):
-        image = cv2.imread(self.df.iloc[idx, 0])
+        image = cv2.imread(self.df.iloc[idx, 1])
+        mask = cv2.imread(self.df.iloc[idx, 3], 0)
+        
         augmented_img = self.transforms(image)
-        return augmented_img
+        
+        return augmented_img, self.df.iloc[idx, 5]
 
-
-def get_train_test_val_sets(global_dataframe):
+def get_train_test_val_sets(df):
     """Prepare dataset
     Keyword arguments:
     global_dataframe -- given by the "load_dataset" function
     Return: train, test, val sets loaders 
     """
-    df=global_dataframe[['image_path','tumor']]
+    #df=global_dataframe[['image_path','tumor']]
     train_df, test_df = train_test_split(df, stratify=df.tumor, test_size=0.15, random_state=42)
     train_df = train_df.reset_index(drop=True)
     test_df = test_df.reset_index(drop=True)

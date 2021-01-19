@@ -54,7 +54,7 @@ def train_test_classification(model,train_dataloader,test_dataloader,epochs=20):
         for batch_idx, (x, target) in enumerate(train_dataloader):
             "hello"
             optimizer.zero_grad()
-            x, target = Variable(x).to(device), Variable(target).to(device)
+            x, target = Variable(x), Variable(target)
             out = model(x)
             loss = criterion(out, target)
             loss.backward()
@@ -67,7 +67,7 @@ def train_test_classification(model,train_dataloader,test_dataloader,epochs=20):
         correct = 0
         with torch.no_grad():
             for batch_idx, (x, target) in enumerate(test_dataloader):
-                x, target = x.to(device), target.to(device)
+                x, target = x, target
                 out = model(x)
                 loss = criterion(out, target)
                 # _, prediction = torch.max(out.data, 1)
@@ -76,3 +76,4 @@ def train_test_classification(model,train_dataloader,test_dataloader,epochs=20):
         taux_classif = 100. * correct / len(test_dataloader.dataset)
         print('Accuracy: {}/{} (tx {:.2f}%, err {:.2f}%)\n'.format(correct,
         len(test_dataloader.dataset), taux_classif, 100.-taux_classif))
+        return model 
