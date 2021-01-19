@@ -46,13 +46,10 @@ def train_test_classification(model,train_dataloader,test_dataloader,epochs=20):
     optimizer = SGD(model.parameters(), lr=0.05)
     # defining the loss function
     criterion = CrossEntropyLoss()
-    print("Ok")
     for epoch in range(epochs):
     # training
         model.train() # mode "train" agit sur "dropout" ou "batchnorm"
-        print("Training")
         for batch_idx, (x, target) in enumerate(train_dataloader):
-            "hello"
             optimizer.zero_grad()
             x, target = Variable(x), Variable(target)
             out = model(x)
@@ -76,4 +73,4 @@ def train_test_classification(model,train_dataloader,test_dataloader,epochs=20):
         taux_classif = 100. * correct / len(test_dataloader.dataset)
         print('Accuracy: {}/{} (tx {:.2f}%, err {:.2f}%)\n'.format(correct,
         len(test_dataloader.dataset), taux_classif, 100.-taux_classif))
-        return model 
+        #return model 
