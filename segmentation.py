@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 from torch.autograd import Variable
 from torch.nn import Linear, ReLU, CrossEntropyLoss, Sequential, Conv2d, MaxPool2d, Module, Softmax, BatchNorm2d, Dropout
 from torch.optim import Adam, SGD
@@ -12,7 +13,7 @@ def DoubleConv(in_channels, out_channels):
         nn.ReLU(inplace=True))
 
 
-class Unet(nn.module):
+class Unet(nn.Module):
     def __init__(self,nb_classes):
         super().__init__()
         #Left side of UNET : Sequential NN
@@ -31,7 +32,7 @@ class Unet(nn.module):
         
         self.last_conv = nn.Conv2d(64, n_classes, kernel_size=1)
 
-    def forward(self,x)
+    def forward(self,x):
         conv1 = self.conv_left1(x)
         x = self.MaxPool2d(conv1)
         conv2 = self.conv_left2(x)
@@ -52,7 +53,7 @@ class Unet(nn.module):
         x = torch.cat([x, conv1], dim=1)
 
         x = self.conv_rigth1(x)
-        
+
         out = self.last_conv(x)
         out = torch.sigmoid(out)
         return out
