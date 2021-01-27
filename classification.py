@@ -1,4 +1,7 @@
-def evaluate_model(model, dataloader):
+import torch
+from torch.autograd import Variable
+
+def evaluate_model(model, device, dataloader, optimizer, criterion):
     avg_accuracy = 0
     avg_loss = 0.0
 
@@ -9,7 +12,7 @@ def evaluate_model(model, dataloader):
             inputs, targets = inputs.to(device), targets.to(device)
             out = model(inputs)
 
-            loss = criterion(out, target)
+            loss = criterion(out, targets)
             _, predictions = torch.max(out, 1)
             nb_correct = torch.sum(predictions == targets)
 
@@ -19,11 +22,7 @@ def evaluate_model(model, dataloader):
     return avg_loss / len(dataloader.dataset), float(avg_accuracy) / len(dataloader.dataset)
 
 
-def train_classification(model,train_dataloader, val_dataloader, optimizer, criterion, epochs=20):
-    # defining the optimizer
-    optimizer = SGD(model.parameters(), lr=0.05)
-    # defining the loss function
-    criterion = CrossEntropyLoss()
+def train_classification(model, device, train_dataloader, val_dataloader, optimizer, criterion, epochs=20):
     for epoch in range(epochs):
     # training
         for batch_idx, (x, target) in enumerate(train_dataloader):
@@ -31,12 +30,14 @@ def train_classification(model,train_dataloader, val_dataloader, optimizer, crit
 
             optimizer.zero_grad()
             x, target = Variable(x), Variable(target)
+            x, target = x.to(device), target.to(device)
             out = model(x)
+
             loss = criterion(out, target)
             loss.backward()
             optimizer.step()
 
             if batch_idx % 20 == 0:
-                val_loss, accuracy = evaluate_model(model, val_dataloader)
-                print('epoch {} batch {} [{}/{}] training loss: {:1.4f} \tvalidation loss: {:1.4f}\tAccuracy (val): {:.1%}'.format(epoch,batch_idx,batch_idx*len(x),
+                val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
+                print('epoch {} batch {}  [{}/{}] training loss: {:1.4f} \tvalidation loss: {:1.4f}\tAccuracy (val): {:.1%}'.format(epoch,batch_idx,batch_idx*len(x),
                         len(train_dataloader.dataset),loss.item(), val_loss, accuracy))
