@@ -56,7 +56,7 @@ class BrainMriDataset(Dataset):
         
         augmented_img = self.transforms(image)
         
-        return augmented_img, self.df.iloc[idx, 5]
+        return augmented_img, mask, self.df.iloc[idx, 5]
 
 def get_train_test_val_sets(df):
     """Prepare dataset
