@@ -22,6 +22,26 @@ import torchvision.transforms as T
 import torch
 import torch.nn as nn
 
+import albumentations as A
+from albumentations.pytorch import ToTensor, ToTensorV2
+
+#data augmentation
+
+transforms = A.Compose([
+    A.Resize(width = PATCH_SIZE, height = PATCH_SIZE, p=1.0),
+    A.HorizontalFlip(p=0.5),
+    A.VerticalFlip(p=0.5),
+    A.RandomRotate90(p=0.5),
+    A.Transpose(p=0.5),
+    A.ShiftScaleRotate(shift_limit=0.01, scale_limit=0.04, rotate_limit=0, p=0.25),
+
+    
+    
+    A.Normalize(p=1.0),
+    ToTensor(),
+])
+
+#dataset preparation for training
 class BrainMriDataset(Dataset):
     def __init__(self, df, transforms):
         
@@ -39,7 +59,7 @@ class BrainMriDataset(Dataset):
         
         return augmented_img, mask, self.df.iloc[idx, 5]
 
-def get_train_test_val_sets(df):
+def get_train_test_val_sets(df,data_transforms=transforms):
     """Prepare dataset
     Keyword arguments:
     global_dataframe -- given by the "load_dataset" function
@@ -56,11 +76,6 @@ def get_train_test_val_sets(df):
     val_df = val_df.reset_index(drop=True)
     print(f"Train: {train_df.shape} \nVal: {val_df.shape} \nTest: {test_df.shape}")
     
-    data_transforms = transforms.Compose([
-        # transforms.Resize([224, 224]),
-        transforms.ToTensor(),
-        #transforms.Normalize(mean=mean, std=std)
-    ])
     # train
     train_dataset = BrainMriDataset(df=train_df, transforms=data_transforms)
     train_dataloader = DataLoader(train_dataset, batch_size=26, num_workers=4, shuffle=True)
