@@ -14,7 +14,7 @@ def DoubleConv(in_channels, out_channels):
 
 
 class Unet(nn.Module):
-    def __init__(self,nb_classes):
+    def __init__(self,nb_classes=2):
         super().__init__()
         #Left side of UNET : Sequential NN
         self.conv_left1=DoubleConv(3,64)
@@ -30,7 +30,7 @@ class Unet(nn.Module):
         self.conv_right2 = DoubleConv(128 + 256, 128)
         self.conv_right1 = DoubleConv(128 + 64, 64)
         
-        self.last_conv = nn.Conv2d(64, n_classes, kernel_size=1)
+        self.last_conv = nn.Conv2d(64, nb_classes, kernel_size=1)
 
     def forward(self,x):
         conv1 = self.conv_left1(x)
@@ -57,3 +57,11 @@ class Unet(nn.Module):
         out = self.last_conv(x)
         out = torch.sigmoid(out)
         return out
+
+
+def build_model(nb_classes=2):
+    model = Unet()
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    # Puts model on GPU/CPU
+    model.to(device)
+    return model

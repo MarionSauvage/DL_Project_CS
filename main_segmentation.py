@@ -1,8 +1,13 @@
-#from preprocessing_segmentation import *
-from segmentation import *
+from preprocessing import load_dataset
+from preprocessing_segmentation import get_train_test_val_sets
+from segmentation import build_model
+
+DATA_PATH = "../kaggle_3m/"
+dataset=load_dataset(DATA_PATH)
+
+train_loader,test_loader,val_loader=get_train_test_val_sets(dataset)
+
+unet = build_model()
+print(unet)
 
 
-
-unet = UNet(n_classes=1).to(device)
-output = unet(torch.randn(1,3,256,256).to(device))
-print("",output.shape)
