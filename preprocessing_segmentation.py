@@ -2,29 +2,28 @@
 File containg methods to preprocess images for classification task
 """
 
-from PIL import Image
-import pandas as pd 
 import os
-import numpy as np 
 import random
-import cv2
-import matplotlib.pyplot as plt
-import seaborn as sns
-from mpl_toolkits.axes_grid import ImageGrid
-from sklearn.model_selection import train_test_split
-from torchvision import datasets, transforms, models
-import torch.nn as nn
-import torch.optim as optim
-import torch
-import torchvision
-from torch.utils.data import DataLoader, Dataset
-import torchvision.transforms as T
-import torch
-import torch.nn as nn
 
 import albumentations as A
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torchvision
+import torchvision.transforms as T
 from albumentations.pytorch import ToTensor, ToTensorV2
+from PIL import Image
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader, Dataset
+from torchvision import datasets, models, transforms
 
+
+PATCH_SIZE=128
 #data augmentation
 
 transforms = A.Compose([
@@ -35,8 +34,6 @@ transforms = A.Compose([
     A.Transpose(p=0.5),
     A.ShiftScaleRotate(shift_limit=0.01, scale_limit=0.04, rotate_limit=0, p=0.25),
 
-    
-    
     A.Normalize(p=1.0),
     ToTensor(),
 ])
