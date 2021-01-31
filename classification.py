@@ -1,5 +1,9 @@
 import torch
 from torch.autograd import Variable
+from model_classifier import reset_parameters_model
+from ray import tune
+from preprocessing_for_classification import *
+
 
 def evaluate_model(model, device, dataloader, optimizer, criterion):
     avg_accuracy = 0
@@ -41,3 +45,29 @@ def train_classification(model, device, train_dataloader, val_dataloader, optimi
                 val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
                 print('epoch {} batch {}  [{}/{}] training loss: {:1.4f} \tvalidation loss: {:1.4f}\tAccuracy (val): {:.1%}'.format(epoch,batch_idx,batch_idx*len(x),
                         len(train_dataloader.dataset),loss.item(), val_loss, accuracy))
+    
+    # Get the last validation accuracy
+    val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
+    return accuracy
+
+
+def hyperparam_optimizer(config):
+    # Initialize model, datasets and criterion
+    train_loader, test_loader, val_loader = get_train_test_val_sets(dataset)
+    
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model = build_model(4, 3, 10)
+
+    criterion = CrossEntropyLoss()
+
+    # Initialize the optimizer
+    optimizer = SGD(model.parameters(), lr=config['lr'], momentum=config['momentum'])
+
+    while True:
+        accuracy = train_classification(model, device, train_dataloader, val_dataloader, optimizer, criterion, epochs=20)
+
+        # Run tune
+        tune.report(avg_accuracy=accuracy)
+
+
+
