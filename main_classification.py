@@ -1,59 +1,67 @@
-import pandas as pd 
-import os
-import numpy as np 
-import random
-from sklearn.model_selection import train_test_split
 from torch.optim import SGD
 from torch.nn import CrossEntropyLoss
 from ray import tune
+from absl import app, flags
 from preprocessing import load_dataset
 from preprocessing_for_classification import *
 from model_classifier import *
 from classification import *
+from classification_optimization import *
 
-# Path to all data
-DATA_PATH = "../lgg-mri-segmentation/kaggle_3m/"
+def main(argv):
+    if FLAGS.mode == 'basic':
+        #### Basic training and evaluation of the classification model ####
+        # Path to all data
+        DATA_PATH = "../lgg-mri-segmentation/kaggle_3m/"
 
-# Load dataset
-dataset = load_dataset(DATA_PATH)
+        # Load dataset
+        dataset = load_dataset(DATA_PATH)
 
-# Separate dataset into train, validation and test dataset
-# print("Size of the datasets:")
-# train_loader, test_loader, val_loader = get_train_test_val_sets(dataset)
-# print("\n")
-
-
-# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-# model = build_model(4, 3, 10)
+        # Separate dataset into train, validation and test dataset
+        print("Size of the datasets:")
+        train_loader, test_loader, val_loader = get_train_test_val_sets(dataset)
+        print("\n")
 
 
-# # defining the optimizer and loss function
-# optimizer = SGD(model.parameters(), lr=0.05)
-# criterion = CrossEntropyLoss()
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        model = build_model(4, 3, 10)
 
-# # Train the model
-# print("Training the model...")
-# train_classification(model, device, train_loader, val_loader, optimizer, criterion, epochs=20)
 
-# # Performance evaluation on test data
-# loss, accuracy = evaluate_model(model, device, test_loader, optimizer, criterion)
-# print("Accuracy (test): {:.1%}".format(accuracy))
+        # defining the optimizer and loss function
+        optimizer = SGD(model.parameters(), lr=0.05)
+        criterion = CrossEntropyLoss()
 
-# Hyperparameters evaluation
-optimizer_analysis = tune.run(
-        hyperparam_optimizer,
-        metric="avg_accuracy",
-        mode="max",
-        stop={
-            "mean_accuracy": 0.98,
-            "training_iteration": 5
-        },
-        resources_per_trial={
-            "cpu": 2,
-            "gpu": 1
-        },
-        num_samples=50,
-        config={
-            "lr": tune.loguniform(1e-4, 1e-2),
-            "momentum": tune.uniform(0.1, 0.9),
-        })
+        # Train the model
+        print("Training the model...")
+        train_classification(model, device, train_loader, val_loader, optimizer, criterion, epochs=20)
+
+        # Performance evaluation on test data
+        loss, accuracy = evaluate_model(model, device, test_loader, optimizer, criterion)
+        print("Accuracy (test): {:.1%}".format(accuracy))
+
+    elif FLAGS.mode == 'optimization':
+        #### Hyperparameters selection ####
+        # Learning rate and momentum
+        optimizer_analysis = tune.run(
+                hyperparam_optimizer,
+                metric="avg_accuracy",
+                mode="max",
+                stop={
+                    "avg_accuracy": 0.98
+                },
+                resources_per_trial={
+                    "cpu": 3,
+                    "gpu": 0.33
+                },
+                num_samples=30,
+                config={
+                    "lr": tune.loguniform(1e-4, 1e-2),
+                    "momentum": tune.uniform(0.1, 0.9),
+                })
+
+if __name__ == '__main__':
+    # Command line arguments setup
+    FLAGS = flags.FLAGS
+    flags.DEFINE_enum('mode', 'basic', ['basic', 'optimization'], '')
+
+    app.run(main)
