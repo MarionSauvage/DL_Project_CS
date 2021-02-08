@@ -12,7 +12,7 @@ def main(argv):
     if FLAGS.mode == 'basic':
         #### Basic training and evaluation of the classification model ####
         # Path to all data
-        DATA_PATH = "../lgg-mri-segmentation/kaggle_3m/"
+        DATA_PATH = "../dataset_mri/lgg-mri-segmentation/kaggle_3m/"
 
         # Load dataset
         dataset = load_dataset(DATA_PATH)
