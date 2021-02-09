@@ -28,7 +28,7 @@ def main(argv):
 
 
         # defining the optimizer and loss function
-        optimizer = SGD(model.parameters(), lr=0.05)
+        optimizer = SGD(model.parameters(), lr=0.00095, momentum=0.874)
         criterion = CrossEntropyLoss()
 
         # Train the model
@@ -47,7 +47,8 @@ def main(argv):
                 metric="avg_accuracy",
                 mode="max",
                 stop={
-                    "avg_accuracy": 0.98
+                    "avg_accuracy": 0.98,
+                    "training_iteration": 1
                 },
                 resources_per_trial={
                     "cpu": 3,
