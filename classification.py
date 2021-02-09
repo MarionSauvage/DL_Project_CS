@@ -1,4 +1,3 @@
-
 import torch
 from torch.autograd import Variable
 from ray import tune

@@ -1,7 +1,7 @@
 from preprocessing import load_dataset
 from preprocessing_segmentation import get_train_test_val_sets
 from model_segmentation import build_model
-from classification import train_segmentation,evaluate_model
+from segmentation import train_segmentation,val_segmentation
 import torch
 from torch.optim import Adam, SGD
 from torch.nn import CrossEntropyLoss
@@ -29,7 +29,7 @@ if __name__=='__main__':
 
     # Train the model
     print("Training the model...")
-    train_segmentation(unet, device, train_loader, val_loader, optimizer, criterion, epochs=5)
+    train_segmentation(model=unet, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=5)
 
     # Performance evaluation on test data
     loss, accuracy = evaluate_model(unet, device, test_loader, optimizer, criterion)
