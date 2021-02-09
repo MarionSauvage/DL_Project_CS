@@ -32,5 +32,5 @@ if __name__=='__main__':
     train_segmentation(model=unet, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=5)
 
     # Performance evaluation on test data
-    loss, accuracy = evaluate_model(unet, device, test_loader, optimizer, criterion)
-    print("Accuracy (test): {:.1%}".format(accuracy))
+    loss = evaluate_model(unet, device, test_loader, optimizer, criterion)
+    

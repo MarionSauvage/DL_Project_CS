@@ -9,7 +9,6 @@ def compute_iou(inputs, target):
     union = target.sum() + inputs.sum()
     if target.sum() == 0 and inputs.sum() == 0:
         return 1.0
-
     return intersection / union
 
 def evaluate_model(model, device,val_loader, optimizer, criterion):
@@ -17,39 +16,48 @@ def evaluate_model(model, device,val_loader, optimizer, criterion):
     num_batches = 0
     avg_loss = 0
     for idx, sample in enumerate(val_loader):
+        train_iou = []
         data = sample['image']
         target = sample['mask']
         data, target = Variable(data.type(opt.dtype)), Variable(target.type(opt.dtype))
         output = model.forward(data)
-        # output = (output > 0.5).type(opt.dtype)	# use more gpu memory, also, loss does not change if use this line
+        #IOU computation
+        out_cut = np.copy(outputs.data.cpu().numpy())
+        out_cut[np.nonzero(out_cut < 0.5)] = 0.0
+        out_cut[np.nonzero(out_cut >= 0.5)] = 1.0
+        train_dice = compute_iou(out_cut, target.data.cpu().numpy())
+        ## LOSS
         loss = criterion(output, target)
         avg_loss += loss.data[0]
         num_batches += 1
     avg_loss /= num_batches
     print('epoch: ' + str(epoch) + ', validation loss: ' + str(avg_loss))
+    return avg_loss
 
 
 def train_segmentation(model, device, train_loader,val_loader, optimzer, criterion, epochs=20):
     for epoch in range(epochs):
-        model.train()
         num_batches = 0
         avg_loss = 0
-        for idx, sample in enumerate(train_loader):
+        for idx, samplein enumerate(train_loader):
+            model.train()
+            optimizer.zero_grad()
             data = sample['image']
             target = sample['mask']
-            data, target = Variable(data.type(opt.dtype)), Variable(target.type(opt.dtype))
-            optimizer.zero_grad()
+            data, target = data.to(device), target.to(device)
             output = model(data)
             # output = (output > 0.5).type(opt.dtype)	# use more gpu memory, also, loss does not change if use this line
             loss = criterion(output, target)
             loss.backward()
             optimizer.step()
             avg_loss += loss.data[0]
-            if batch_idx % 20 == 0:
-                    val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
-                    print('epoch {} batch {}  [{}/{}] training loss: {:1.4f} \tvalidation loss: {:1.4f}\tAccuracy (val): {:.1%}'.format(epoch,batch_idx,batch_idx*len(x),
-                            len(train_dataloader.dataset),loss.item(), val_loss, accuracy))
+            num_batches += 1
+            if idx % 20 == 0:
+                    val_loss= evaluate_model(model, device, val_loader, optimizer, criterion)
 
+                    print('epoch {} batch {}  [{}/{}] training loss: {:1.4f} \tvalidation loss: {:1.4f:}'.format(epoch,idx,idx*len(x),
+                            len(train_loader.dataset),loss.item(), val_loss))
+    return 
 
 # make prediction
 def run_test(model, test_loader, opt):
