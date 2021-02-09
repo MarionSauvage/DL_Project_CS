@@ -1,68 +1,50 @@
 import torch
-import torch.nn as nn
 from torch.autograd import Variable
-from torch.nn import Linear, ReLU, CrossEntropyLoss, Sequential, Conv2d, MaxPool2d, Module, Softmax, BatchNorm2d, Dropout
-from torch.optim import Adam, SGD
+from ray import tune
+from preprocessing_for_classification import *
 
 
-def DoubleConv(in_channels, out_channels):
-    return nn.Sequential(
-        nn.Conv2d(in_channels, out_channels, 3, padding=1),
-        nn.ReLU(inplace=True),
-        nn.Conv2d(out_channels, out_channels, 3, padding=1),
-        nn.ReLU(inplace=True))
+def evaluate_model(model, device, dataloader, optimizer, criterion):
+    avg_accuracy = 0
+    avg_loss = 0.0
+
+    model.eval()
+    with torch.no_grad():
+        for data in dataloader:
+            inputs, targets = data
+            inputs, targets = inputs.to(device), targets.to(device)
+            out = model(inputs)
+
+            loss = criterion(out, targets)
+            _, predictions = torch.max(out, 1)
+            nb_correct = torch.sum(predictions == targets)
+
+            avg_loss += loss.item()
+            avg_accuracy += nb_correct
+    
+    return avg_loss / len(dataloader.dataset), float(avg_accuracy) / len(dataloader.dataset)
 
 
-class Unet(nn.Module):
-    def __init__(self,nb_classes=2):
-        super().__init__()
-        #Left side of UNET : Sequential NN
-        self.conv_left1=DoubleConv(3,64)
-        self.conv_left2 = DoubleConv(64, 128)
-        self.conv_left3 = DoubleConv(128, 256)
-        self.conv_left4 = DoubleConv(256, 512)        
+def train_classification(model, device, train_dataloader, val_dataloader, optimizer, criterion, epochs=20):
+    for epoch in range(epochs):
+    # training
+        for batch_idx, (x, target) in enumerate(train_dataloader):
+            model.train()
 
-        self.maxpool = nn.MaxPool2d(2)
-        self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)        
-        
-        #Right side of UNET : 
-        self.conv_right3 = DoubleConv(256 + 512, 256)
-        self.conv_right2 = DoubleConv(128 + 256, 128)
-        self.conv_right1 = DoubleConv(128 + 64, 64)
-        
-        self.last_conv = nn.Conv2d(64, nb_classes, kernel_size=1)
+            optimizer.zero_grad()
+            x, target = Variable(x), Variable(target)
+            x, target = x.to(device), target.to(device)
+            out = model(x)
 
-    def forward(self,x):
-        conv1 = self.conv_left1(x)
-        x = self.MaxPool2d(conv1)
-        conv2 = self.conv_left2(x)
-        x = self.MaxPool2d(conv2)
-        conv3 = self.conv_left3(x)
-        x = self.maxpool(x)
-        conv4 = self.conv_left4(x)
-        x = self.upsample(x)
+            loss = criterion(out, target)
+            loss.backward()
+            optimizer.step()
 
-        x = torch.cat([x, conv3], dim=1)
-
-        x = self.conv_rigth3(x)
-        x = self.upsample(x)
-        x = torch.cat([x, conv2], dim=1)
-
-        x = self.conv_rigth2(x)
-        x = self.upsample(x)
-        x = torch.cat([x, conv1], dim=1)
-
-        x = self.conv_rigth1(x)
-
-        out = self.last_conv(x)
-        out = torch.sigmoid(out)
-        return out
-
-
-def build_model(nb_classes=2):
-    model = Unet()
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    # Puts model on GPU/CPU
-    model.to(device)
-    return model
-
+            if batch_idx % 20 == 0:
+                val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
+                print('epoch {} batch {}  [{}/{}] training loss: {:1.4f} \tvalidation loss: {:1.4f}\tAccuracy (val): {:.1%}'.format(epoch,batch_idx,batch_idx*len(x),
+                        len(train_dataloader.dataset),loss.item(), val_loss, accuracy))
+    
+    # Get the last validation accuracy
+    val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
+    return accuracy

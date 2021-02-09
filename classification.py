@@ -41,3 +41,5 @@ def train_classification(model, device, train_dataloader, val_dataloader, optimi
                 val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
                 print('epoch {} batch {}  [{}/{}] training loss: {:1.4f} \tvalidation loss: {:1.4f}\tAccuracy (val): {:.1%}'.format(epoch,batch_idx,batch_idx*len(x),
                         len(train_dataloader.dataset),loss.item(), val_loss, accuracy))
+
+

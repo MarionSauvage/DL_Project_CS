@@ -4,8 +4,8 @@ File containg methods to preprocess images for classification task
 
 import os
 import random
-
 import albumentations as A
+from albumentations.pytorch import ToTensor, ToTensorV2
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -49,12 +49,19 @@ class BrainMriDataset(Dataset):
         return len(self.df)
     
     def __getitem__(self, idx):
+        """ 
+        returns :
+        - augmented image
+        - mask
+        - label 
+
+        """        
         image = cv2.imread(self.df.iloc[idx, 1])
         mask = cv2.imread(self.df.iloc[idx, 3], 0)
+        #We take into account the mask
+        augmented = self.transforms(image=image,mask=mask)
         
-        augmented_img = self.transforms(image)
-        
-        return augmented_img, mask, self.df.iloc[idx, 5]
+        return augmented['image'], augmented['mask'], self.df.iloc[idx, 5]
 
 def get_train_test_val_sets(df,data_transforms=transforms):
     """Prepare dataset
