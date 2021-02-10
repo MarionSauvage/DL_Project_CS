@@ -1,10 +1,10 @@
 from preprocessing import load_dataset
 from preprocessing_segmentation import get_train_test_val_sets
 from model_segmentation import build_model
-from segmentation import train_segmentation,val_segmentation
+from segmentation import train_segmentation,evaluate_model
 import torch
 from torch.optim import Adam, SGD
-from torch.nn import CrossEntropyLoss
+from torch.nn import CrossEntropyLoss, BCELoss
 
 if __name__=='__main__':
     #data import
@@ -24,13 +24,14 @@ if __name__=='__main__':
 
 
     # defining the optimizer and loss function
-    optimizer = optim.Adam(unet.parameters())
-    criterion = nn.BCELoss().cuda()
+    optimizer = Adam(unet.parameters(), lr=1e-3)
+    criterion = BCELoss().cuda()
 
     # Train the model
     print("Training the model...")
-    train_segmentation(model=unet, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=5)
+    loss_history, iou_train_history,val_loss_history=train_segmentation(model=unet, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=5)
 
     # Performance evaluation on test data
-    loss = evaluate_model(unet, device, test_loader, optimizer, criterion)
-    
+    iou_test,avg_loss_test = evaluate_model(unet, device, test_loader, optimizer, criterion)
+    print(iou_test)
+    print(avg_loss_test)

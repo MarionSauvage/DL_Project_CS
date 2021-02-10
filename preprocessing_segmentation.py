@@ -61,7 +61,7 @@ class BrainMriDataset(Dataset):
         #We take into account the mask
         augmented = self.transforms(image=image,mask=mask)
         
-        return augmented['image'], augmented['mask'], self.df.iloc[idx, 5]
+        return augmented
 
 def get_train_test_val_sets(df,data_transforms=transforms):
     """Prepare dataset

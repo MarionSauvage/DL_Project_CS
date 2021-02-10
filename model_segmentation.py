@@ -34,9 +34,9 @@ class Unet(nn.Module):
 
     def forward(self,x):
         conv1 = self.conv_left1(x)
-        x = self.MaxPool2d(conv1)
+        x = self.maxpool(conv1)
         conv2 = self.conv_left2(x)
-        x = self.MaxPool2d(conv2)
+        x = self.maxpool(conv2)
         conv3 = self.conv_left3(x)
         x = self.maxpool(x)
         conv4 = self.conv_left4(x)
