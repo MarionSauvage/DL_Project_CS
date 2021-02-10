@@ -17,7 +17,7 @@ class Unet(nn.Module):
     def __init__(self,nb_classes=2):
         super().__init__()
         #Left side of UNET : Sequential NN
-        self.conv_left1=DoubleConv(3,64)
+        self.conv_left1 = DoubleConv(3,64)
         self.conv_left2 = DoubleConv(64, 128)
         self.conv_left3 = DoubleConv(128, 256)
         self.conv_left4 = DoubleConv(256, 512)        
@@ -38,21 +38,21 @@ class Unet(nn.Module):
         conv2 = self.conv_left2(x)
         x = self.maxpool(conv2)
         conv3 = self.conv_left3(x)
-        x = self.maxpool(x)
+        x = self.maxpool(conv3)
         conv4 = self.conv_left4(x)
-        x = self.upsample(x)
+        x = self.upsample(conv4)
 
         x = torch.cat([x, conv3], dim=1)
 
-        x = self.conv_rigth3(x)
+        x = self.conv_right3(x)
         x = self.upsample(x)
         x = torch.cat([x, conv2], dim=1)
 
-        x = self.conv_rigth2(x)
+        x = self.conv_right2(x)
         x = self.upsample(x)
         x = torch.cat([x, conv1], dim=1)
 
-        x = self.conv_rigth1(x)
+        x = self.conv_right1(x)
 
         out = self.last_conv(x)
         out = torch.sigmoid(out)

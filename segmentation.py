@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 from torch.autograd import Variable
 #from ray import tune
@@ -54,7 +55,7 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
             output = model(data)
             print(output.shape)
             #IOU computation
-            out_cut = np.copy(outputs.data.cpu().numpy())
+            out_cut = np.copy(output.data.cpu().numpy())
             out_cut[np.nonzero(out_cut < 0.5)] = 0.0
             out_cut[np.nonzero(out_cut >= 0.5)] = 1.0
             train_dice = compute_iou(out_cut, target.data.cpu().numpy())
