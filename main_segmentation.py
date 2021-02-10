@@ -29,9 +29,9 @@ if __name__=='__main__':
 
     # Train the model
     print("Training the model...")
-    loss_history, iou_train_history,val_loss_history=train_segmentation(model=unet, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=2)
+    loss_history, iou_train_history, val_iou_history=train_segmentation(model=unet, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=4)
 
     # Performance evaluation on test data
-    iou_test,avg_loss_test = evaluate_model(unet, device, test_loader, optimizer, criterion)
-    print(iou_test)
-    print(avg_loss_test)
+    avg_loss_test, iou_test = evaluate_model(unet, device, test_loader, optimizer, criterion)
+    print("IoU (test): {:.1%}".format(iou_test))
+    print("Loss (test): {:1.4f}".format(avg_loss_test))

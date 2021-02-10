@@ -38,8 +38,8 @@ def evaluate_model(model, device,val_loader, optimizer, criterion):
 
 def train_segmentation(model, device, train_loader,val_loader, optimizer, criterion, epochs=20):
     loss_history = []
-    train_history = []
-    val_history = []
+    val_iou_history = []
+    iou_train_history = []
     for epoch in range(epochs):
         num_batches = 0
         train_iou = []
@@ -64,12 +64,17 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
             loss.backward()
             optimizer.step()
             if idx % 20 == 0:
-                val_loss, val_acc = evaluate_model(model, device, val_loader, optimizer, criterion)
+                val_loss, val_iou = evaluate_model(model, device, val_loader, optimizer, criterion)
+                val_iou_history.append(val_iou)
 
-                print('epoch {} batch {}  [{}/{}]\ttraining loss: {:1.4f} \tvalidation loss: {:1.4f}\t\tAccuracy (val): {:.1%}'.format(epoch, idx, idx*len(data),
-                        len(train_loader.dataset), loss.item(), val_loss, val_acc))
+                print('epoch {} batch {}  [{}/{}]\ttraining loss: {:1.4f} \tvalidation loss: {:1.4f}\t\tIoU (val): {:.1%}'.format(epoch, idx, idx*len(data),
+                        len(train_loader.dataset), loss.item(), val_loss, val_iou))
         
         loss_history.append(np.array(losses).mean())
         iou_train_history.append(np.array(train_iou).mean())
-        val_loss_history.append(val_mean_iou)
-    return loss_history, iou_train_history,val_loss_history
+        
+
+        # Get the last validation accuracy
+        val_loss, val_iou = evaluate_model(model, device, val_loader, optimizer, criterion)
+        val_iou_history.append(val_iou)
+    return loss_history, iou_train_history, val_iou_history
