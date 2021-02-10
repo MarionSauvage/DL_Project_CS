@@ -33,7 +33,6 @@ transforms = A.Compose([
     A.RandomRotate90(p=0.5),
     A.Transpose(p=0.5),
     A.ShiftScaleRotate(shift_limit=0.01, scale_limit=0.04, rotate_limit=0, p=0.25),
-
     A.Normalize(p=1.0),
     ToTensor(),
 ])
@@ -46,7 +45,7 @@ class BrainMriDataset(Dataset):
         self.transforms = transforms
         
     def __len__(self):
-        return len(self.df)
+        return len(self.df) 
     
     def __getitem__(self, idx):
         """ 
@@ -56,6 +55,9 @@ class BrainMriDataset(Dataset):
         - label 
 
         """        
+        print("img",self.df.iloc[idx, 2])
+        print("mask",self.df.iloc[idx, 3])
+        print("other",self.df.iloc[idx, 1])
         image = cv2.imread(self.df.iloc[idx, 1])
         mask = cv2.imread(self.df.iloc[idx, 3], 0)
         #We take into account the mask
