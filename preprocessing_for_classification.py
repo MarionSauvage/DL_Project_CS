@@ -22,20 +22,6 @@ import torchvision.transforms as T
 import torch
 import torch.nn as nn
 
-# class BrainMriDataset(Dataset):
-#     def __init__(self, df, transforms):
-        
-#         self.df = df
-#         self.transforms = transforms
-        
-#     def __len__(self):
-#         return len(self.df)
-    
-#     def __getitem__(self, idx):
-#         image = cv2.imread(self.df.iloc[idx, 0])
-#         augmented_img = self.transforms(image)
-#         return augmented_img
-
 class BrainMriDataset(Dataset):
     def __init__(self, df, transforms):
         
@@ -47,7 +33,6 @@ class BrainMriDataset(Dataset):
     
     def __getitem__(self, idx):
         image = cv2.imread(self.df.iloc[idx, 1])
-        mask = cv2.imread(self.df.iloc[idx, 3], 0)
         
         augmented_img = self.transforms(image)
         

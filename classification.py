@@ -47,4 +47,6 @@ def train_classification(model, device, train_dataloader, val_dataloader, optimi
     
     # Get the last validation accuracy
     val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
+
     return accuracy
+
