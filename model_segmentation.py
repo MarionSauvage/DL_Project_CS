@@ -14,7 +14,7 @@ def DoubleConv(in_channels, out_channels):
 
 
 class Unet(nn.Module):
-    def __init__(self,nb_classes=2):
+    def __init__(self,nb_classes=1):
         super().__init__()
         #Left side of UNET : Sequential NN
         self.conv_left1 = DoubleConv(3,64)

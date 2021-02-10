@@ -55,9 +55,9 @@ class BrainMriDataset(Dataset):
         - label 
 
         """        
-        print("img",self.df.iloc[idx, 2])
-        print("mask",self.df.iloc[idx, 3])
-        print("other",self.df.iloc[idx, 1])
+        # print("img",self.df.iloc[idx, 2].shape)
+        # print("mask",self.df.iloc[idx, 4])
+        # print("other",self.df.iloc[idx, 1])
         image = cv2.imread(self.df.iloc[idx, 1])
         mask = cv2.imread(self.df.iloc[idx, 3], 0)
         #We take into account the mask
@@ -84,13 +84,13 @@ def get_train_test_val_sets(df,data_transforms=transforms):
     
     # train
     train_dataset = BrainMriDataset(df=train_df, transforms=data_transforms)
-    train_dataloader = DataLoader(train_dataset, batch_size=26, num_workers=4, shuffle=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=20, num_workers=4, shuffle=True)
 
     # val
     val_dataset = BrainMriDataset(df=val_df, transforms=data_transforms)
-    val_dataloader = DataLoader(val_dataset, batch_size=26, num_workers=4, shuffle=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=20, num_workers=4, shuffle=True)
 
     #test
     test_dataset = BrainMriDataset(df=test_df, transforms=data_transforms)
-    test_dataloader = DataLoader(test_dataset, batch_size=26, num_workers=4, shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size=20, num_workers=4, shuffle=True)
     return train_dataloader,test_dataloader,val_dataloader
