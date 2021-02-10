@@ -24,7 +24,7 @@ def main(argv):
 
 
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        model = build_model(4, 3, 10)
+        model = build_model(6, 4, 20)
 
 
         # defining the optimizer and loss function
