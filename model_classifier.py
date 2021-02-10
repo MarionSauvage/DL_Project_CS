@@ -13,12 +13,12 @@ class Net(Module):
             Conv2d(3, conv_out_features, kernel_size=conv_kernel_size, stride=1, padding=1),
             ReLU(inplace=True),
             MaxPool2d(kernel_size=2, stride=2),
-            BatchNorm2d(4),
+            BatchNorm2d(conv_out_features),
             # Defining another 2D convolution layer
             Conv2d(conv_out_features, conv_out_features, kernel_size=conv_kernel_size, stride=1, padding=1),
             ReLU(inplace=True),
             MaxPool2d(kernel_size=2, stride=2),
-            BatchNorm2d(4),
+            BatchNorm2d(conv_out_features),
         )
 
         self.linear_layers = Sequential(

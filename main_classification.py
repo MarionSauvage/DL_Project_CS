@@ -39,8 +39,8 @@ def main(argv):
         loss, accuracy = evaluate_model(model, device, test_loader, optimizer, criterion)
         print("Accuracy (test): {:.1%}".format(accuracy))
 
-    elif FLAGS.mode == 'optimization':
-        #### Hyperparameters selection ####
+    #### Hyperparameters selection ####
+    elif FLAGS.mode == 'optimizer_optimization':
         # Learning rate and momentum
         optimizer_analysis = tune.run(
                 hyperparam_optimizer,
@@ -59,10 +59,29 @@ def main(argv):
                     "lr": tune.loguniform(1e-4, 1e-2),
                     "momentum": tune.uniform(0.1, 0.9),
                 })
+    elif FLAGS.mode == 'nn_layers_optimization':
+        # neural network layers optimization
+        optimizer_analysis = tune.run(
+                hyperparam_nn_layers,
+                metric="avg_accuracy",
+                mode="max",
+                stop={
+                    "avg_accuracy": 0.98,
+                    "training_iteration": 2
+                },
+                resources_per_trial={
+                    "cpu": 3,
+                    "gpu": 0.33
+                },
+                config={
+                    "conv_out_features": tune.grid_search([4, 5, 6]),
+                    "conv_kernel_size": tune.grid_search([3, 4, 5]),
+                    "linear_features": tune.grid_search([5, 10, 15, 20]),
+                })
 
 if __name__ == '__main__':
     # Command line arguments setup
     FLAGS = flags.FLAGS
-    flags.DEFINE_enum('mode', 'basic', ['basic', 'optimization'], '')
+    flags.DEFINE_enum('mode', 'basic', ['basic', 'optimizer_optimization', 'nn_layers_optimization'], '')
 
     app.run(main)
