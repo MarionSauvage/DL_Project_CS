@@ -8,3 +8,10 @@ They correspond to 110 patients included in The Cancer Genome Atlas (TCGA) lower
 Tumor genomic clusters and patient data is provided in data.csv file.
 
 ![image](dataset.png)
+
+
+Segmentation with UNET architecture
+
+![image](unet_archi.png)
+
+Source : https://becominghuman.ai/implementing-unet-in-pytorch-8c7e05a121b4
