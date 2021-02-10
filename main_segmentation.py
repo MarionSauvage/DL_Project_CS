@@ -9,7 +9,6 @@ from torch.nn import CrossEntropyLoss, BCELoss
 
 if __name__=='__main__':
     #data import
-    #DATA_PATH = "../kaggle_3m/"
     DATA_PATH="../dataset_mri/lgg-mri-segmentation/kaggle_3m/"
     dataset=load_dataset(DATA_PATH)
     print(dataset.head())

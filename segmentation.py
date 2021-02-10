@@ -51,7 +51,6 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
             target = sample['mask']
             data, target = data.to(device), target.to(device)
             output = model(data)
-            # print(output.shape)
             #IOU computation
             out_cut = np.copy(output.data.cpu().numpy())
             out_cut[np.nonzero(out_cut < 0.5)] = 0.0

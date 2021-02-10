@@ -54,10 +54,7 @@ class BrainMriDataset(Dataset):
         - mask
         - label 
 
-        """        
-        # print("img",self.df.iloc[idx, 2].shape)
-        # print("mask",self.df.iloc[idx, 4])
-        # print("other",self.df.iloc[idx, 1])
+        """
         image = cv2.imread(self.df.iloc[idx, 1])
         mask = cv2.imread(self.df.iloc[idx, 3], 0)
         #We take into account the mask
