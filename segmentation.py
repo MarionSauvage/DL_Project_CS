@@ -37,7 +37,12 @@ def evaluate_model(model, device,val_loader, optimizer, criterion):
 
 
 def train_segmentation(model, device, train_loader,val_loader, optimizer, criterion, epochs=20):
+    n_epochs_stop = 6
+    epochs_no_improve = 0
+    early_stop = False
+    min_val_loss = np.Inf
     loss_history = []
+    track_loss=0
     val_iou_history = []
     iou_train_history = []
     for epoch in range(epochs):
@@ -60,6 +65,20 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
             ## LOSS
             loss = criterion(output, target)
             losses.append(loss.item())
+            #Early stopping loss tracking
+            track_loss+=loss
+            track_loss=track_loss/len(train_loader)
+            if track_loss < min_val_loss:
+                epochs_no_improve=0
+                min_val_loss=track_loss
+            else:
+                epochs_no_improve+=1
+            if epoch>10 and epochs_no_improve==n_epochs_stop:
+                print('Early stopping !')
+                early_stop=True
+                break
+            else:
+                continue
             loss.backward()
             optimizer.step()
             if idx % 20 == 0:
@@ -76,4 +95,7 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
         # Get the last validation accuracy
         val_loss, val_iou = evaluate_model(model, device, val_loader, optimizer, criterion)
         val_iou_history.append(val_iou)
+        if early_stop:
+            print("Stopped")
+            break
     return loss_history, iou_train_history, val_iou_history
