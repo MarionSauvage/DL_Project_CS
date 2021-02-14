@@ -72,9 +72,11 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
         
         loss_history.append(np.array(losses).mean())
         iou_train_history.append(np.array(train_iou).mean())
-        
 
-        # Get the last validation accuracy
+        # Get the new validation accuracy
         val_loss, val_iou = evaluate_model(model, device, val_loader, optimizer, criterion)
         val_iou_history.append(val_iou)
+        print("Loss (val): {:1.4f}".format(val_loss))
+        print("IoU (val): {:.1%}".format(val_iou))
+        
     return loss_history, iou_train_history, val_iou_history
