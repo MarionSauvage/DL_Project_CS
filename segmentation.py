@@ -16,21 +16,22 @@ def evaluate_model(model, device,val_loader, optimizer, criterion):
     num_batches = 0
     avg_loss = 0
     iou=0
-    for idx, sample in enumerate(val_loader):
-        data = sample['image']
-        target = sample['mask']
-        data, target = data.to(device),target.to(device)
-        output = model.forward(data)
-        #IOU computation
-        out_cut = np.copy(output.data.cpu().numpy())
-        out_cut[np.nonzero(out_cut < 0.5)] = 0.0
-        out_cut[np.nonzero(out_cut >= 0.5)] = 1.0
-        val_iou = compute_iou(out_cut, target.data.cpu().numpy())
-        iou+=val_iou
-        ## LOSS
-        loss = criterion(output, target)
-        avg_loss += loss.item()
-        num_batches += 1
+    with torch.no_grad():
+        for idx, sample in enumerate(val_loader):
+            data = sample['image']
+            target = sample['mask']
+            data, target = data.to(device),target.to(device)
+            output = model.forward(data)
+            #IOU computation
+            out_cut = np.copy(output.data.cpu().numpy())
+            out_cut[np.nonzero(out_cut < 0.5)] = 0.0
+            out_cut[np.nonzero(out_cut >= 0.5)] = 1.0
+            val_iou = compute_iou(out_cut, target.data.cpu().numpy())
+            iou+=val_iou
+            ## LOSS
+            loss = criterion(output, target)
+            avg_loss += loss.item()
+            num_batches += 1
     avg_loss /= num_batches
     iou /= num_batches
     return avg_loss, iou
