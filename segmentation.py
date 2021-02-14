@@ -38,9 +38,13 @@ def evaluate_model(model, device,val_loader, optimizer, criterion):
 
 
 def train_segmentation(model, device, train_loader,val_loader, optimizer, criterion, epochs=20):
+    # Training loss and IoU lists
     loss_history = []
-    val_iou_history = []
     iou_train_history = []
+
+    # Validation loss and IoU lists for each epochs
+    val_iou_history = []
+    val_loss_history = []
     for epoch in range(epochs):
         num_batches = 0
         train_iou = []
@@ -65,8 +69,6 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
             optimizer.step()
             if idx % 20 == 0:
                 val_loss, val_iou = evaluate_model(model, device, val_loader, optimizer, criterion)
-                val_iou_history.append(val_iou)
-
                 print('epoch {} batch {}  [{}/{}]\ttraining loss: {:1.4f} \tvalidation loss: {:1.4f}\t\tIoU (val): {:.1%}'.format(epoch, idx, idx*len(data),
                         len(train_loader.dataset), loss.item(), val_loss, val_iou))
         
@@ -76,7 +78,8 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
         # Get the new validation accuracy
         val_loss, val_iou = evaluate_model(model, device, val_loader, optimizer, criterion)
         val_iou_history.append(val_iou)
+        val_loss_history.append(val_loss)
         print("Loss (val): {:1.4f}".format(val_loss))
         print("IoU (val): {:.1%}".format(val_iou))
         
-    return loss_history, iou_train_history, val_iou_history
+    return val_loss_history, val_iou_history
