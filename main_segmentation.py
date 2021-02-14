@@ -8,6 +8,9 @@ from torch.optim import Adam, SGD
 from torch.nn import CrossEntropyLoss, BCELoss
 
 if __name__=='__main__':
+    # Set torch seed
+    torch.manual_seed(42)
+
     #data import
     DATA_PATH="../dataset_mri/lgg-mri-segmentation/kaggle_3m/"
     dataset=load_dataset(DATA_PATH)
@@ -29,7 +32,7 @@ if __name__=='__main__':
 
     # Train the model
     print("Training the model...")
-    loss_history, iou_train_history, val_iou_history=train_segmentation(model=unet, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=4)
+    loss_history, iou_train_history, val_iou_history=train_segmentation(model=unet, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=50)
 
     # Performance evaluation on test data
     avg_loss_test, iou_test = evaluate_model(unet, device, test_loader, optimizer, criterion)

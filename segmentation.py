@@ -21,7 +21,7 @@ def evaluate_model(model, device,val_loader, optimizer, criterion):
             data = sample['image']
             target = sample['mask']
             data, target = data.to(device),target.to(device)
-            output = model.forward(data)
+            output = model(data)
             #IOU computation
             out_cut = np.copy(output.data.cpu().numpy())
             out_cut[np.nonzero(out_cut < 0.5)] = 0.0
