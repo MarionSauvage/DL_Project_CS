@@ -62,13 +62,13 @@ def main(argv):
             # Save validation loss graph
             plt.plot(epochs, val_loss_history)
             plt.title(f'Validation loss, lr = {lr}')
-            plt.savefig(f'./graphs/val_loss_lr_{lr}.png')
+            plt.savefig(f'./graphs/{FLAGS.model}-val_loss_lr_{lr}.png')
             plt.clf()
 
             # Save validation IoU graph
             plt.plot(epochs, val_iou_history)
             plt.title(f'Validation IoU, lr = {lr}')
-            plt.savefig(f'./graphs/val_iou_lr_{lr}.png')
+            plt.savefig(f'./graphs/{FLAGS.model}-val_iou_lr_{lr}.png')
             plt.clf()
 
             # Performance evaluation on test data
