@@ -3,6 +3,9 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torch.nn import Linear, ReLU, CrossEntropyLoss, Sequential, Conv2d, MaxPool2d, Module, Softmax, BatchNorm2d, Dropout
 from torch.optim import Adam, SGD
+from torchvision import models
+
+base_model = models.resnet18(pretrained=False)
 
 
 def DoubleConv(in_channels, out_channels):
@@ -13,14 +16,19 @@ def DoubleConv(in_channels, out_channels):
         nn.ReLU(inplace=True))
 
 
-class Unet(nn.Module):
+class UnetResNet(nn.Module):
     def __init__(self,nb_classes=1):
         super().__init__()
+
+        ## Resnet backbone 
+        self.base_model = models.resnet18(pretrained=True)
+        self.base_layers = list(base_model.children())  
+
         #Left side of UNET : Sequential NN
-        self.conv_left1 = DoubleConv(3,64)
-        self.conv_left2 = DoubleConv(64, 128)
-        self.conv_left3 = DoubleConv(128, 256)
-        self.conv_left4 = DoubleConv(256, 512)        
+        self.conv_left1 = nn.Sequential(self.base_layers[:4])
+        self.conv_left2 = nn.Sequential(self.base_layers[5])
+        self.conv_left3 = nn.Sequential(self.base_layers[6])
+        self.conv_left4 = nn.Sequential(self.base_layers[7])    
 
         self.maxpool = nn.MaxPool2d(2)
         self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)        
@@ -60,7 +68,8 @@ class Unet(nn.Module):
 
 
 def build_model(nb_classes=2):
-    model = Unet()
+    base_model = base_model.to(device)
+    model = UnetResNet()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     # Puts model on GPU/CPU
     model.to(device)
