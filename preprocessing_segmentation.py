@@ -23,7 +23,8 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, models, transforms
 
 
-PATCH_SIZE=128
+#PATCH_SIZE=128 
+PATCH_SIZE=256
 #data augmentation
 
 transforms = A.Compose([
