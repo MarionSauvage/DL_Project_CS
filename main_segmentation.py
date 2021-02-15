@@ -7,6 +7,7 @@ import torch
 from torch.optim import Adam, SGD
 from torch.nn import CrossEntropyLoss, BCELoss
 from absl import app, flags
+import matplotlib.pyplot as plt
 
 
 def main(argv):
@@ -43,7 +44,7 @@ def main(argv):
         print("Loss (test): {:1.4f}".format(avg_loss_test))
 
     elif FLAGS.mode == 'learning_rate_comparison':
-        lr_list = [1e-2, 5e-3, 3e-3]
+        lr_list = [5e-5]
         epochs = [i for i in range(FLAGS.epochs)]
 
         for lr in lr_list:
@@ -61,13 +62,13 @@ def main(argv):
             # Save validation loss graph
             plt.plot(epochs, val_loss_history)
             plt.title(f'Validation loss, lr = {lr}')
-            plt.savefig(f'val_loss_lr_{lr}.png')
+            plt.savefig(f'./graphs/val_loss_lr_{lr}.png')
             plt.clf()
 
             # Save validation IoU graph
             plt.plot(epochs, val_iou_history)
             plt.title(f'Validation IoU, lr = {lr}')
-            plt.savefig(f'val_iou_lr_{lr}.png')
+            plt.savefig(f'./graphs/val_iou_lr_{lr}.png')
             plt.clf()
 
             # Performance evaluation on test data

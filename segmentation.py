@@ -77,7 +77,7 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
 
         # Get the new validation accuracy
         val_loss, val_iou = evaluate_model(model, device, val_loader, optimizer, criterion)
-        val_iou_history.append(val_iou)
+        val_iou_history.append(val_iou * 100)
         val_loss_history.append(val_loss)
         print("Loss (val): {:1.4f}".format(val_loss))
         print("IoU (val): {:.1%}".format(val_iou))
