@@ -4,8 +4,11 @@ from torch.autograd import Variable
 from torch.nn import Linear, ReLU, CrossEntropyLoss, Sequential, Conv2d, MaxPool2d, Module, Softmax, BatchNorm2d, Dropout
 from torch.optim import Adam, SGD
 from torchvision import models
+from torchvision.models import resnext50_32x4d
 
-backbone=models.resnet18(pretrained=True)
+backbone=resnext50_32x4d(pretrained=True)
+
+# backbone=models.resnet18(pretrained=True)
 
 def DoubleConv(in_channels, out_channels):
     return nn.Sequential(
