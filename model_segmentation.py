@@ -4,6 +4,7 @@ from torch.autograd import Variable
 from torch.nn import Linear, ReLU, CrossEntropyLoss, Sequential, Conv2d, MaxPool2d, Module, Softmax, BatchNorm2d, Dropout
 from torch.optim import Adam, SGD
 from torchvision import models
+from torchvision.models import resnext50_32x4d
 
 base_model = models.resnet18(pretrained=False)
 
