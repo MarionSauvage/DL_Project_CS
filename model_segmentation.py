@@ -68,10 +68,10 @@ class UnetResNet(nn.Module):
         self.base_layers = list(backbone.children())  
 
         #Left side of UNET : Sequential NN
-        self.conv_left1 = nn.Sequential(self.base_layers[:4])
-        self.conv_left2 = nn.Sequential(self.base_layers[5])
-        self.conv_left3 = nn.Sequential(self.base_layers[6])
-        self.conv_left4 = nn.Sequential(self.base_layers[7])    
+        self.conv_left1 = nn.Sequential(self.base_layers[:4][0])
+        self.conv_left2 = nn.Sequential(self.base_layers[5][0])
+        self.conv_left3 = nn.Sequential(self.base_layers[6][0])
+        self.conv_left4 = nn.Sequential(self.base_layers[7][0])    
 
         self.maxpool = nn.MaxPool2d(2)
         self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)        

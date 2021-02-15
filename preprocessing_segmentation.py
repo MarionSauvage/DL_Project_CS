@@ -24,7 +24,6 @@ from torchvision import datasets, models, transforms
 
 
 PATCH_SIZE=128 
-# PATCH_SIZE=256
 
 # Data augmentation
 transforms = A.Compose([
