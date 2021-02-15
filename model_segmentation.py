@@ -4,10 +4,8 @@ from torch.autograd import Variable
 from torch.nn import Linear, ReLU, CrossEntropyLoss, Sequential, Conv2d, MaxPool2d, Module, Softmax, BatchNorm2d, Dropout
 from torch.optim import Adam, SGD
 from torchvision import models
-from torchvision.models import resnext50_32x4d
 
-base_model = models.resnet18(pretrained=False)
-
+backbone=models.resnet18(pretrained=True)
 
 def DoubleConv(in_channels, out_channels):
     return nn.Sequential(
@@ -22,8 +20,8 @@ class UnetResNet(nn.Module):
         super().__init__()
 
         ## Resnet backbone 
-        self.base_model = models.resnet18(pretrained=True)
-        self.base_layers = list(base_model.children())  
+        self.base_model = backbone
+        self.base_layers = list(backbone.children())  
 
         #Left side of UNET : Sequential NN
         self.conv_left1 = nn.Sequential(self.base_layers[:4])
@@ -68,8 +66,7 @@ class UnetResNet(nn.Module):
         return out
 
 
-def build_model(nb_classes=2):
-    base_model = base_model.to(device)
+def build_model():
     model = UnetResNet()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     # Puts model on GPU/CPU
