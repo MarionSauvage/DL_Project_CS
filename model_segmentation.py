@@ -6,9 +6,9 @@ from torch.optim import Adam, SGD
 from torchvision import models
 from torchvision.models import resnext50_32x4d
 
-backbone=resnext50_32x4d(pretrained=True)
+# backbone=resnext50_32x4d(pretrained=True)
 
-# backbone=models.resnet18(pretrained=True)
+resnet_backbone = models.resnet18(pretrained=True)
 
 def DoubleConv(in_channels, out_channels):
     return nn.Sequential(
@@ -67,8 +67,8 @@ class UnetResNet(nn.Module):
         super().__init__()
 
         ## Resnet backbone 
-        self.base_model = backbone
-        self.base_layers = list(backbone.children())  
+        self.base_model = resnet_backbone
+        self.base_layers = list(resnet_backbone.children())
 
         #Left side of UNET : Sequential NN
         self.conv_left1 = nn.Sequential(self.base_layers[:4][0])
@@ -88,12 +88,9 @@ class UnetResNet(nn.Module):
 
     def forward(self,x):
         conv1 = self.conv_left1(x)
-        x = self.maxpool(conv1)
-        conv2 = self.conv_left2(x)
-        x = self.maxpool(conv2)
-        conv3 = self.conv_left3(x)
-        x = self.maxpool(conv3)
-        conv4 = self.conv_left4(x)
+        conv2 = self.conv_left2(conv1)
+        conv3 = self.conv_left3(conv2)
+        conv4 = self.conv_left4(conv3)
         x = self.upsample(conv4)
 
         x = torch.cat([x, conv3], dim=1)
@@ -107,6 +104,7 @@ class UnetResNet(nn.Module):
         x = torch.cat([x, conv1], dim=1)
 
         x = self.conv_right1(x)
+        x = self.upsample(x)
 
         out = self.last_conv(x)
         out = torch.sigmoid(out)
