@@ -26,53 +26,53 @@ def main(argv):
     print(train_loader)
 
     if FLAGS.mode == 'basic':
-        unet = build_model()
-        print(unet)
+        model = build_model(FLAGS.model)
+        print(model)
 
 
         # defining the optimizer and loss function
-        optimizer = Adam(unet.parameters(), lr=1e-3)
+        optimizer = Adam(model.parameters(), lr=1e-3)
         criterion = BCELoss().cuda()
 
         # Train the model
         print("Training the model...")
-        val_loss_history, val_iou_history = train_segmentation(model=unet, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=50)
+        val_loss_history, val_iou_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=50)
 
         # Performance evaluation on test data
-        avg_loss_test, iou_test = evaluate_model(unet, device, test_loader, optimizer, criterion)
+        avg_loss_test, iou_test = evaluate_model(model, device, test_loader, optimizer, criterion)
         print("IoU (test): {:.1%}".format(iou_test))
         print("Loss (test): {:1.4f}".format(avg_loss_test))
 
     elif FLAGS.mode == 'learning_rate_comparison':
-        lr_list = [5e-5]
+        lr_list = [1e-3, 1e-4, 1e-5]
         epochs = [i for i in range(FLAGS.epochs)]
 
         for lr in lr_list:
-            unet = build_model()
+            model = build_model(FLAGS.model)
 
             # defining the optimizer and loss function
             print("Learning rate: ", lr)
-            optimizer = Adam(unet.parameters(), lr=lr)
+            optimizer = Adam(model.parameters(), lr=lr)
             criterion = BCELoss().cuda()
 
             # Train the model
             print("Training the model...")
-            val_loss_history, val_iou_history = train_segmentation(model=unet, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs)
+            val_loss_history, val_iou_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs)
             
             # Save validation loss graph
             plt.plot(epochs, val_loss_history)
             plt.title(f'Validation loss, lr = {lr}')
-            plt.savefig(f'./graphs/val_loss_lr_{lr}.png')
+            plt.savefig(f'./graphs/{FLAGS.model}-val_loss_lr_{lr}.png')
             plt.clf()
 
             # Save validation IoU graph
             plt.plot(epochs, val_iou_history)
             plt.title(f'Validation IoU, lr = {lr}')
-            plt.savefig(f'./graphs/val_iou_lr_{lr}.png')
+            plt.savefig(f'./graphs/{FLAGS.model}-val_iou_lr_{lr}.png')
             plt.clf()
 
             # Performance evaluation on test data
-            avg_loss_test, iou_test = evaluate_model(unet, device, test_loader, optimizer, criterion)
+            avg_loss_test, iou_test = evaluate_model(model, device, test_loader, optimizer, criterion)
             print("IoU (test): {:.1%}".format(iou_test))
             print("Loss (test): {:1.4f}".format(avg_loss_test))
 
@@ -80,6 +80,7 @@ if __name__ == '__main__':
     # Command line arguments setup
     FLAGS = flags.FLAGS
     flags.DEFINE_enum('mode', 'basic', ['basic', 'learning_rate_comparison'], '')
+    flags.DEFINE_enum('model', 'Unet', ['Unet', 'UnetResNet', 'UnetResNext'], '')
     flags.DEFINE_integer('epochs', 50, "")
 
     app.run(main)

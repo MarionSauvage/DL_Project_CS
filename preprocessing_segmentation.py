@@ -23,9 +23,9 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, models, transforms
 
 
-PATCH_SIZE=128
-#data augmentation
+PATCH_SIZE=128 
 
+# Data augmentation
 transforms = A.Compose([
     A.Resize(width = PATCH_SIZE, height = PATCH_SIZE, p=1.0),
     A.HorizontalFlip(p=0.5),
@@ -37,7 +37,7 @@ transforms = A.Compose([
     ToTensor(),
 ])
 
-#dataset preparation for training
+# Dataset preparation for training
 class BrainMriDataset(Dataset):
     def __init__(self, df, transforms):
         
