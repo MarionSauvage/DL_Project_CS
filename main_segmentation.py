@@ -36,7 +36,7 @@ def main(argv):
 
         # Train the model
         print("Training the model...")
-        val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=50)
+        val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs)
         
         # Print loss, dice and iou history
         print("Dice history (val): ", val_dice_history)
@@ -52,7 +52,7 @@ def main(argv):
         print("Loss (test): {:1.4f}".format(avg_loss_test))
 
     elif FLAGS.mode == 'learning_rate_comparison':
-        lr_list = [1e-3, 1e-4, 1e-5]
+        lr_list = [1e-4]
         epochs = [i for i in range(FLAGS.epochs)]
 
         for lr in lr_list:

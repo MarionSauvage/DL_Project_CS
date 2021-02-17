@@ -109,14 +109,14 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
 
             if idx % 20 == 0:
                 val_loss, val_dice, val_iou, val_pixel_acc = evaluate_model(model, device, val_loader, optimizer, criterion)
-                print('epoch {} batch {}  [{}/{}]\ttraining loss: {:1.4f} \tvalidation loss: {:1.4f}\t\tDice (val): {:.1%}\tIoU (val): {:.1%}\tPixel accuracy (val): {:.1%}'.format(epoch, idx, idx*len(data),
+                print('epoch {} batch {}  [{}/{}]\ttraining loss: {:1.4f} \tvalidation loss: {:1.4f}\t\tDice (val): {:.1%}\tIoU (val): {:.1%}\t\tPixel accuracy (val): {:.1%}'.format(epoch, idx, idx*len(data),
                         len(train_loader.dataset), loss.item(), val_loss, val_dice, val_iou, val_pixel_acc))
         
         loss_history.append(np.array(losses).mean())
         dice_train_history.append(np.array(train_dice).mean())
 
         # Get the new validation accuracy
-        val_loss, val_dice, val_iou = evaluate_model(model, device, val_loader, optimizer, criterion)
+        val_loss, val_dice, val_iou, val_pixel_acc = evaluate_model(model, device, val_loader, optimizer, criterion)
         val_dice_history.append(val_dice * 100)
         val_iou_history.append(val_iou * 100)
         val_pixel_acc_history.append(val_pixel_acc * 100)

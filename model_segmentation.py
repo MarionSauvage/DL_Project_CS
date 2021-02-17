@@ -149,7 +149,7 @@ class UnetResNext(nn.Module):
 
         x = self.upsample(x)
         x = torch.cat([x, block2], dim=1)
-        x = self.conv_right2(x)s
+        x = self.conv_right2(x)
 
         x = self.upsample(x)
         x = torch.cat([x, block1], dim=1)
