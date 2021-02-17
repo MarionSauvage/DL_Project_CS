@@ -44,7 +44,7 @@ def main(argv):
         print("Loss (test): {:1.4f}".format(avg_loss_test))
 
     elif FLAGS.mode == 'learning_rate_comparison':
-        lr_list = [5e-5]
+        lr_list = [1e-3, 1e-4, 1e-5]
         epochs = [i for i in range(FLAGS.epochs)]
 
         for lr in lr_list:
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     # Command line arguments setup
     FLAGS = flags.FLAGS
     flags.DEFINE_enum('mode', 'basic', ['basic', 'learning_rate_comparison'], '')
-    flags.DEFINE_enum('model', 'Unet', ['Unet', 'UnetResNet'], '')
+    flags.DEFINE_enum('model', 'Unet', ['Unet', 'UnetResNet', 'UnetResNext'], '')
     flags.DEFINE_integer('epochs', 50, "")
 
     app.run(main)
