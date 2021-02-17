@@ -126,8 +126,6 @@ class UnetResNext(nn.Module):
         self.block_left4 = nn.Sequential(*self.base_layers[7])    
 
         self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)        
-        #self.deconv = nn.ConvTranspose2d(in_channels // 4, in_channels // 4, kernel_size=4,
-                                          #stride=2, padding=1, output_padding=0)
         #Right side of UNET :
         self.conv_right3 = DoubleConv(256 + 512, 256)
         self.conv_right2 = DoubleConv(128 + 256, 128)
@@ -151,7 +149,7 @@ class UnetResNext(nn.Module):
 
         x = self.upsample(x)
         x = torch.cat([x, block2], dim=1)
-        x = self.conv_right2(x)
+        x = self.conv_right2(x)s
 
         x = self.upsample(x)
         x = torch.cat([x, block1], dim=1)
