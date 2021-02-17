@@ -116,43 +116,35 @@ class UnetResNext(nn.Module):
         super().__init__()
 
         ## Resnet backbone 
-        self.base_model = resnext_backbone
-        self.base_layers = list(resnext_backbone.children())
+        self.base_model = backbone
+        self.base_layers = list(backbone.children())  
 
         #Left side of UNET : Sequential NN
-        self.block_left0 = nn.Sequential(*self.base_layers[:3])
-        self.block_left1 = nn.Sequential(*self.base_layers[3:5])
+        self.block_left1 = nn.Sequential(*self.base_layers[:4])
         self.block_left2 = nn.Sequential(*self.base_layers[5])
         self.block_left3 = nn.Sequential(*self.base_layers[6])
         self.block_left4 = nn.Sequential(*self.base_layers[7])    
 
-        self.maxpool = nn.MaxPool2d(2)
         self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)        
-        
-        #Right side of UNET : 
+        #self.deconv = nn.ConvTranspose2d(in_channels // 4, in_channels // 4, kernel_size=4,
+                                          #stride=2, padding=1, output_padding=0)
+        #Right side of UNET :
         self.conv_right3 = DoubleConv(256 + 512, 256)
         self.conv_right2 = DoubleConv(128 + 256, 128)
         self.conv_right1 = DoubleConv(128 + 64, 64)
         
         self.last_conv = nn.Conv2d(64, nb_classes, kernel_size=1)
         # Final Classifier
-        # self.last_conv0 = ConvRelu(256, 128, 3, 1)
-        # self.last_conv1 = nn.Conv2d(128, nb_classes, 3, padding=1)
+        self.last_conv0 = ConvRelu(128, 64, 3, 1)
+
 
     def forward(self,x):
         #ENCODER BLOCK
-        x = self.block_left0(x)
         block1 = self.block_left1(x)
         block2 = self.block_left2(block1)
         block3 = self.block_left3(block2)
         block4 = self.block_left4(block3)
-
         ##DECODER BLOCK
-    
-        # x = self.upsample(block4)
-        # x = torch.cat([x, block4], dim=1)
-        # x = self.conv_right4(x)
-
         x = self.upsample(block4)
         x = torch.cat([x, block3], dim=1)
         x = self.conv_right3(x)
@@ -163,11 +155,10 @@ class UnetResNext(nn.Module):
 
         x = self.upsample(x)
         x = torch.cat([x, block1], dim=1)
-
         x = self.conv_right1(x)
-
+        
+        x = self.upsample(x)
         out = self.last_conv(x)
-        #out = self.last_conv1(out)
         out = torch.sigmoid(out)
         return out
 
