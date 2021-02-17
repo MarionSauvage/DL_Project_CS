@@ -36,15 +36,17 @@ def main(argv):
 
         # Train the model
         print("Training the model...")
-        val_loss_history, val_dice_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=50)
+        val_loss_history, val_dice_history, val_iou_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=50)
         
-        # Print loss and dice history
+        # Print loss, dice and iou history
         print("Dice history (val): ", val_dice_history)
+        print("IoU history (val): ", val_iou_history)
         print("Loss history (val): ", val_loss_history)
 
         # Performance evaluation on test data
-        avg_loss_test, dice_test = evaluate_model(model, device, test_loader, optimizer, criterion)
+        avg_loss_test, dice_test, iou_test = evaluate_model(model, device, test_loader, optimizer, criterion)
         print("Dice (test): {:.1%}".format(dice_test))
+        print("IoU (test): {:.1%}".format(iou_test))
         print("Loss (test): {:1.4f}".format(avg_loss_test))
 
     elif FLAGS.mode == 'learning_rate_comparison':
@@ -61,10 +63,11 @@ def main(argv):
 
             # Train the model
             print("Training the model...")
-            val_loss_history, val_dice_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs)
+            val_loss_history, val_dice_history, val_iou_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs)
             
-            # Print loss and dice history
+            # Print loss, dice and iou history
             print("Dice history (val): ", val_dice_history)
+            print("IoU history (val): ", val_iou_history)
             print("Loss history (val): ", val_loss_history)
 
             # Save validation loss graph
@@ -79,9 +82,16 @@ def main(argv):
             plt.savefig(f'./graphs/{FLAGS.model}-val_dice_lr_{lr}.png')
             plt.clf()
 
+            # Save validation IoU graph
+            plt.plot(epochs, val_iou_history)
+            plt.title(f'Validation iou, lr = {lr}')
+            plt.savefig(f'./graphs/{FLAGS.model}-val_iou_lr_{lr}.png')
+            plt.clf()
+
             # Performance evaluation on test data
-            avg_loss_test, dice_test = evaluate_model(model, device, test_loader, optimizer, criterion)
+            avg_loss_test, dice_test, iou_test = evaluate_model(model, device, test_loader, optimizer, criterion)
             print("Dice (test): {:.1%}".format(dice_test))
+            print("IoU (test): {:.1%}".format(dice_test))
             print("Loss (test): {:1.4f}".format(avg_loss_test))
 
 if __name__ == '__main__':
