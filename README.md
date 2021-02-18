@@ -1,5 +1,10 @@
-# DL_Project_CS : Brain MRI segmentation
+# DL_Project_CS : Brain MRI classification and segmentation
 
+This project is part of a Deep Learning course in AI major at CentraleSupélec.
+
+## Clone repository
+
+## Dataset download
 Data hosted on kaggle : https://www.kaggle.com/mateuszbuda/lgg-mri-segmentation
 
 This dataset contains brain MR images together with manual FLAIR abnormality segmentation masks.
@@ -9,6 +14,11 @@ Tumor genomic clusters and patient data is provided in data.csv file.
 
 ![image](dataset.png)
 
+There is no API. It has to be uplaod manually.
+
+## Repository structure
+
+## Requirements 
 
 Segmentation with UNET architecture
 
