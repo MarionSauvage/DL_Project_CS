@@ -4,6 +4,10 @@ This project is part of a Deep Learning course in AI major at CentraleSupélec.
 
 ## Clone repository
 
+```sh
+$ git clone https://github.com/MarionSauvage/DL_Project_CS.git
+```
+
 ## Dataset download
 Data hosted on kaggle : https://www.kaggle.com/mateuszbuda/lgg-mri-segmentation
 
@@ -11,10 +15,11 @@ This dataset contains brain MR images together with manual FLAIR abnormality seg
 The images were obtained from The Cancer Imaging Archive (TCIA).
 They correspond to 110 patients included in The Cancer Genome Atlas (TCGA) lower-grade glioma collection with at least fluid-attenuated inversion recovery (FLAIR) sequence and genomic cluster data available.
 Tumor genomic clusters and patient data is provided in data.csv file.
+There is no API. It has to be uplaod manually.
 
 ![image](images/dataset.png)
 
-There is no API. It has to be uplaod manually.
+
 
 ## Repository structure
 
@@ -40,7 +45,26 @@ There is no API. It has to be uplaod manually.
 └── .gitignore
 ```
 
+* In the root directory, we have :
+   - `preprocessing.py` which is used to process the dataset before applying classification or segmentation codes. 
+    - There is as well a `data_vizualisation.ipynb`, a jupyter notebook allowing to get a better understanding of the dataset.
+    - There 2 main files `main_classification.py`and `main_segmentation.py` which respectively allow to perform classification and semgentation on the dataset. 
+
+* In the **images** directory, one find the images present in the README.
+
+* In **classification** directory :
+    - ``classification.py``
+    - ``classification_optimization.py``
+    - ``model_classification.py``
+    - ``preprocessing_classification.py``
+
+* In **segmentation** directory 
+
 ## Requirements 
+
+
+
+## Models
 
 Segmentation with UNET architecture
 
