@@ -1,7 +1,8 @@
-
-from .preprocessing import load_dataset
-from segmentation import *
-from result_display import *
+from preprocessing import load_dataset
+from segmentation.preprocessing_segmentation import get_train_test_val_sets
+from segmentation.model_segmentation import build_model
+from segmentation.segmentation import train_segmentation, evaluate_model, get_predictions_data
+from segmentation.result_display import *
 import torch
 from torch.optim import Adam, SGD
 from torch.nn import CrossEntropyLoss, BCELoss
