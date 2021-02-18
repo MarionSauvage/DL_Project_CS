@@ -3,10 +3,10 @@ from torch.nn import CrossEntropyLoss
 from ray import tune
 from absl import app, flags
 from preprocessing import load_dataset
-from preprocessing_for_classification import *
-from model_classifier import *
-from classification import *
-from classification_optimization import *
+from classification.preprocessing_for_classification import *
+from classification.model_classifier import *
+from classification.classification import *
+from classification.classification_optimization import *
 
 def main(argv):
     if FLAGS.mode == 'basic':

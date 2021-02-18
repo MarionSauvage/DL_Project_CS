@@ -12,7 +12,7 @@ The images were obtained from The Cancer Imaging Archive (TCIA).
 They correspond to 110 patients included in The Cancer Genome Atlas (TCGA) lower-grade glioma collection with at least fluid-attenuated inversion recovery (FLAIR) sequence and genomic cluster data available.
 Tumor genomic clusters and patient data is provided in data.csv file.
 
-![image](dataset.png)
+![image](images/dataset.png)
 
 There is no API. It has to be uplaod manually.
 
@@ -22,6 +22,6 @@ There is no API. It has to be uplaod manually.
 
 Segmentation with UNET architecture
 
-![image](unet_archi.png)
+![image](images/unet_archi.png)
 
 Source : https://becominghuman.ai/implementing-unet-in-pytorch-8c7e05a121b4

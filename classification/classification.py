@@ -1,7 +1,6 @@
 import torch
 from torch.autograd import Variable
-from ray import tune
-from preprocessing_for_classification import *
+from classification import *
 
 
 def evaluate_model(model, device, dataloader, optimizer, criterion):
