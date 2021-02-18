@@ -26,7 +26,7 @@ from torchvision import datasets, models, transforms
 PATCH_SIZE=128 
 
 # Data augmentation
-transforms = A.Compose([
+data_aug_transforms = A.Compose([
     A.Resize(width = PATCH_SIZE, height = PATCH_SIZE, p=1.0),
     A.HorizontalFlip(p=0.5),
     A.VerticalFlip(p=0.5),
@@ -36,6 +36,13 @@ transforms = A.Compose([
     A.Normalize(p=1.0),
     ToTensor(),
 ])
+
+test_transforms = A.Compose([
+    A.Resize(width = PATCH_SIZE, height = PATCH_SIZE, p=1.0),
+    A.Normalize(p=1.0),
+    ToTensor(),
+])
+
 
 # Dataset preparation for training
 class BrainMriDataset(Dataset):
@@ -62,7 +69,7 @@ class BrainMriDataset(Dataset):
         
         return augmented
 
-def get_train_test_val_sets(df,data_transforms=transforms):
+def get_train_test_val_sets(df, data_aug_transforms=data_aug_transforms, test_transforms=test_transforms):
     """Prepare dataset
     Keyword arguments:
     global_dataframe -- given by the "load_dataset" function
@@ -80,14 +87,14 @@ def get_train_test_val_sets(df,data_transforms=transforms):
     print(f"Train: {train_df.shape} \nVal: {val_df.shape} \nTest: {test_df.shape}")
     
     # train
-    train_dataset = BrainMriDataset(df=train_df, transforms=data_transforms)
+    train_dataset = BrainMriDataset(df=train_df, transforms=data_aug_transforms)
     train_dataloader = DataLoader(train_dataset, batch_size=20, num_workers=4, shuffle=True)
 
     # val
-    val_dataset = BrainMriDataset(df=val_df, transforms=data_transforms)
+    val_dataset = BrainMriDataset(df=val_df, transforms=data_aug_transforms)
     val_dataloader = DataLoader(val_dataset, batch_size=20, num_workers=4, shuffle=True)
 
     #test
-    test_dataset = BrainMriDataset(df=test_df, transforms=data_transforms)
+    test_dataset = BrainMriDataset(df=test_df, transforms=test_transforms)
     test_dataloader = DataLoader(test_dataset, batch_size=20, num_workers=4, shuffle=True)
     return train_dataloader,test_dataloader,val_dataloader
