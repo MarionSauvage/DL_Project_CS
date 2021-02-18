@@ -1,6 +1,7 @@
 # DL_Project_CS : Brain MRI classification and segmentation
 
 This project is part of a Deep Learning course in AI major at CentraleSupélec.
+We used pytorch deep learning framework.
 
 ## Clone repository
 
@@ -45,7 +46,7 @@ There is no API. It has to be uplaod manually.
 └── .gitignore
 ```
 
-* In the root directory, we have :
+* In the **root** directory, we have :
    - `preprocessing.py` which is used to process the dataset before applying classification or segmentation codes. 
     - There is as well a `data_vizualisation.ipynb`, a jupyter notebook allowing to get a better understanding of the dataset.
     - There 2 main files `main_classification.py`and `main_segmentation.py` which respectively allow to perform classification and semgentation on the dataset. 
@@ -53,12 +54,16 @@ There is no API. It has to be uplaod manually.
 * In the **images** directory, one find the images present in the README.
 
 * In **classification** directory :
-    - ``classification.py``
-    - ``classification_optimization.py``
-    - ``model_classification.py``
-    - ``preprocessing_classification.py``
+    - ``classification.py`` : train and validation functions for the network
+    - ``classification_optimization.py`` : function to optimize hypermparameters 
+    - ``model_classification.py`` : model architecture (CNN)
+    - ``preprocessing_classification.py`` : preprocessing to obtain a pytorch formated dataset for training
 
-* In **segmentation** directory 
+* In **segmentation** directory :
+    - ``preprocessing_segmentation.py`` :  preprocessing to obtain a pytorch formated dataset for training with masks 
+    - ``model_segmentation.py`` : models architecture (U-Nets)
+    - ``result_display.py`` : function to display predictions 
+    - ``segmentation.py`` : train and validation functions for the network
 
 ## Requirements 
 
