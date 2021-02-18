@@ -1,5 +1,8 @@
 import torch
 from torch.autograd import Variable
+from ray import tune
+from preprocessing_for_classification import *
+
 
 def evaluate_model(model, device, dataloader, optimizer, criterion):
     avg_accuracy = 0
@@ -41,3 +44,9 @@ def train_classification(model, device, train_dataloader, val_dataloader, optimi
                 val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
                 print('epoch {} batch {}  [{}/{}] training loss: {:1.4f} \tvalidation loss: {:1.4f}\tAccuracy (val): {:.1%}'.format(epoch,batch_idx,batch_idx*len(x),
                         len(train_dataloader.dataset),loss.item(), val_loss, accuracy))
+    
+    # Get the last validation accuracy
+    val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
+
+    return accuracy
+
