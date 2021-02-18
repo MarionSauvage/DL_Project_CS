@@ -55,7 +55,7 @@ def evaluate_model(model, device,val_loader, optimizer, criterion):
 
             # Pixel accuracy
             val_pixel_acc = compute_pixel_accuracy(out_cut, target.data.cpu().numpy())
-            pixel_acc = val_pixel_acc
+            pixel_acc += val_pixel_acc
 
             ## LOSS
             loss = criterion(output, target)
@@ -68,6 +68,27 @@ def evaluate_model(model, device,val_loader, optimizer, criterion):
     pixel_acc /= num_batches
     return avg_loss, dice, iou, pixel_acc
 
+def get_predictions_data(model, device, test_loader):
+    # Computes the prediction for the first batch
+    predictions = []
+    with torch.no_grad():
+        for _, sample in enumerate(test_loader):
+            data = sample['image']
+            target = sample['mask']
+
+            data, target = data.to(device),target.to(device)
+            output = model(data)
+
+            out_cut = np.copy(output.data.cpu().numpy())
+            out_cut[np.nonzero(out_cut < 0.5)] = 0.0
+            out_cut[np.nonzero(out_cut >= 0.5)] = 1.0
+
+            for i in range(data.shape[0]):
+                predictions.append([data.detach().cpu().numpy()[i, :, :, :], target.detach().cpu().numpy()[i, :, :, :], out_cut[i, :, :, :]])
+
+            break
+
+    return predictions
 
 def train_segmentation(model, device, train_loader,val_loader, optimizer, criterion, epochs=20):
     # Training loss and dice lists

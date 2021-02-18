@@ -2,7 +2,8 @@
 from preprocessing import load_dataset
 from preprocessing_segmentation import get_train_test_val_sets
 from model_segmentation import build_model
-from segmentation import train_segmentation,evaluate_model
+from segmentation import train_segmentation, evaluate_model, get_predictions_data
+from result_display import *
 import torch
 from torch.optim import Adam, SGD
 from torch.nn import CrossEntropyLoss, BCELoss
@@ -29,9 +30,8 @@ def main(argv):
         model = build_model(FLAGS.model)
         print(model)
 
-
         # defining the optimizer and loss function
-        optimizer = Adam(model.parameters(), lr=1e-3)
+        optimizer = Adam(model.parameters(), lr=1e-4)
         criterion = BCELoss().cuda()
 
         # Train the model
@@ -50,6 +50,9 @@ def main(argv):
         print("IoU (test): {:.1%}".format(iou_test))
         print("Pixel accuracy (test): {:.1%}".format(pixel_acc_test))
         print("Loss (test): {:1.4f}".format(avg_loss_test))
+
+        predictions = get_predictions_data(model, device, test_loader)
+        display_predictions(predictions)
 
     elif FLAGS.mode == 'learning_rate_comparison':
         lr_list = [1e-4]
