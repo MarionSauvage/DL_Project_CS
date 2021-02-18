@@ -21,17 +21,17 @@ There is no API. It has to be uplaod manually.
 ``` bash 
 ├── README.md
 ├── classification
-│   ├── preprocessing_classification.py
-│   ├── model_classification.py
 │   ├── classification.py
-│   ├── network.pth
-│   └── network.py
-├── images
+│   ├── classification_optimization.py
+│   ├── model_classification.py
+│   └── preprocessing_classification.py
+│── images
 │   ├── dataset.png
-│   └── unet_archi.png
-│── segmentation
+│   └── unet_archi.png   
+├── segmentation
 │   ├── preprocessing_segmentation.py
 │   ├── model_segmentation.py
+│   ├── result_display.py
 │   └── segmentation.py
 ├── data_visualization.ipynb
 ├── main_classification.py
