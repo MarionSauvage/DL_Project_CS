@@ -18,7 +18,7 @@ They correspond to 110 patients included in The Cancer Genome Atlas (TCGA) lower
 Tumor genomic clusters and patient data is provided in data.csv file.
 There is no API. It has to be uplaod manually.
 
-![image](images/dataset.png)
+<div style="text-align:center"><img src="images/dataset.png" width="60%"></div>
 
 
 
@@ -70,9 +70,12 @@ There is no API. It has to be uplaod manually.
 
 
 ## Models
+ 
+* for classification we used a convolutional neural network (CNN) 
 
-Segmentation with UNET architecture
+* for segmentation we used a UNET architecture described below 
 
-![image](images/unet_archi.png)
+<div style="text-align:center"><img src="images/unet_archi.png" width="60%">
 
-Source : https://becominghuman.ai/implementing-unet-in-pytorch-8c7e05a121b4
+
+Source : https://becominghuman.ai/implementing-unet-in-pytorch-8c7e05a121b4 </div> 
