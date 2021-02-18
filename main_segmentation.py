@@ -1,8 +1,6 @@
 
-from preprocessing import load_dataset
-from preprocessing_segmentation import get_train_test_val_sets
-from model_segmentation import build_model
-from segmentation import train_segmentation, evaluate_model, get_predictions_data
+from .preprocessing import load_dataset
+from segmentation import *
 from result_display import *
 import torch
 from torch.optim import Adam, SGD
