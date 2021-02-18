@@ -110,7 +110,7 @@ def get_k_splits_test_set(df, n_splits=5, test_transforms=test_transforms):
 
     # Split df into train+val dataset and test_df
     train_val_df, test_df = train_test_split(df, stratify=df.tumor, test_size=0.15, random_state=42)
-    train_val_df = train_df.reset_index(drop=True)
+    train_val_df = train_val_df.reset_index(drop=True)
     test_df = test_df.reset_index(drop=True)
 
     # Get split indices for k-fold cross-validation
@@ -146,3 +146,5 @@ def get_train_val_splits_set(df, train_indices, val_indices, data_aug_transforms
     # Get validation set loader
     val_dataset = BrainMriDataset(df=val_df, transforms=data_aug_transforms)
     val_dataloader = DataLoader(val_dataset, batch_size=20, num_workers=4, shuffle=True)
+
+    return train_dataloader, val_dataloader
