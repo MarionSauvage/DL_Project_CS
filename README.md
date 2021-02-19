@@ -16,7 +16,7 @@ This dataset contains brain MR images together with manual FLAIR abnormality seg
 The images were obtained from The Cancer Imaging Archive (TCIA).
 They correspond to 110 patients included in The Cancer Genome Atlas (TCGA) lower-grade glioma collection with at least fluid-attenuated inversion recovery (FLAIR) sequence and genomic cluster data available.
 Tumor genomic clusters and patient data is provided in data.csv file.
-There is no API. It has to be uplaod manually.
+There is no API. It has to be uploaded manually.
 
 <div style="text-align:center"><img src="images/dataset.png" width="60%"></div>
 
@@ -49,13 +49,13 @@ There is no API. It has to be uplaod manually.
 * In the **root** directory, we have :
    - `preprocessing.py` which is used to process the dataset before applying classification or segmentation codes. 
     - There is as well a `data_vizualisation.ipynb`, a jupyter notebook allowing to get a better understanding of the dataset.
-    - There 2 main files `main_classification.py`and `main_segmentation.py` which respectively allow to perform classification and semgentation on the dataset. 
+    - There 2 main files `main_classification.py`and `main_segmentation.py` which respectively allow to perform classification and segmentation on the dataset. 
 
 * In the **images** directory, one find the images present in the README.
 
 * In **classification** directory :
     - ``classification.py`` : train and validation functions for the network
-    - ``classification_optimization.py`` : function to optimize hypermparameters 
+    - ``classification_optimization.py`` : function to optimize hyperparameters 
     - ``model_classification.py`` : model architecture (CNN)
     - ``preprocessing_classification.py`` : preprocessing to obtain a pytorch formated dataset for training
 
