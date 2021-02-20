@@ -44,7 +44,7 @@ def main(argv):
         print("Loss history (val): ", val_loss_history)
 
         # Performance evaluation on test data
-        avg_loss_test, dice_test, iou_test, pixel_acc_test = evaluate_model(model, device, test_loader, optimizer, criterion)
+        avg_loss_test, dice_test, iou_test, pixel_acc_test = evaluate_model(model, device, test_loader, criterion)
         print("Dice (test): {:.1%}".format(dice_test))
         print("IoU (test): {:.1%}".format(iou_test))
         print("Pixel accuracy (test): {:.1%}".format(pixel_acc_test))
@@ -107,7 +107,7 @@ def main(argv):
             plt.clf()
 
             # Performance evaluation on test data
-            avg_loss_test, dice_test, iou_test, pixel_acc_test = evaluate_model(model, device, test_loader, optimizer, criterion)
+            avg_loss_test, dice_test, iou_test, pixel_acc_test = evaluate_model(model, device, test_loader, criterion)
             print("Dice (test): {:.1%}".format(dice_test))
             print("IoU (test): {:.1%}".format(iou_test))
             print("Pixel accuracy (test): {:.1%}".format(pixel_acc_test))
@@ -139,7 +139,7 @@ def main(argv):
 
 
             # Performance evaluation on test data
-            avg_loss_test, dice_test, iou_test, pixel_acc_test = evaluate_model(model, device, test_loader, optimizer, criterion)
+            avg_loss_test, dice_test, iou_test, pixel_acc_test = evaluate_model(model, device, test_loader, criterion)
             print("Dice (test): {:.1%}".format(dice_test))
             print("IoU (test): {:.1%}".format(iou_test))
             print("Pixel accuracy (test): {:.1%}".format(pixel_acc_test))
