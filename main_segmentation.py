@@ -50,8 +50,15 @@ def main(argv):
         print("Pixel accuracy (test): {:.1%}".format(pixel_acc_test))
         print("Loss (test): {:1.4f}".format(avg_loss_test))
 
-        predictions = get_predictions_data(model, device, test_loader)
-        display_predictions(predictions)
+        if FLAGS.display_predictions:
+            predictions = get_predictions_data(model, device, test_loader)
+            display_predictions(predictions)
+
+        # Save model paramters to disk if save path is provided
+        if FLAGS.save_path != '':
+            print("Saving model...")
+            model.to('cpu')
+            torch.save(model.state_dict(), FLAGS.save_path + FLAGS.model + '_model.pt')
 
     elif FLAGS.mode == 'learning_rate_comparison':
         lr_list = [1e-4]
@@ -117,10 +124,12 @@ if __name__ == '__main__':
     # Command line arguments setup
     FLAGS = flags.FLAGS
     flags.DEFINE_enum('mode', 'basic', ['basic', 'learning_rate_comparison', 'k_fold_cross_validation'], '')
-    flags.DEFINE_enum('model', 'Unet', ['Unet', 'UnetResNet', 'UnetResNext'], '')
-    flags.DEFINE_integer('epochs', 50, "")
-    flags.DEFINE_integer('early_stopping', 7, "")
-    flags.DEFINE_integer('nb_splits', 5, "")
-    flags.DEFINE_float('lr', 1e-4, "")
+    flags.DEFINE_enum('model', 'Unet', ['Unet', 'UnetResNet'], '')
+    flags.DEFINE_integer('epochs', 50, '')
+    flags.DEFINE_integer('early_stopping', 7, '')
+    flags.DEFINE_integer('nb_splits', 5, '')
+    flags.DEFINE_float('lr', 1e-4, '')
+    flags.DEFINE_bool('display_predictions', False, '')
+    flags.DEFINE_string('save_path', '', 'Path of the directory to save the model')
 
     app.run(main)
