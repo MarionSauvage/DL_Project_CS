@@ -30,12 +30,12 @@ def main(argv):
         print(model)
 
         # defining the optimizer and loss function
-        optimizer = Adam(model.parameters(), lr=1e-4)
+        optimizer = Adam(model.parameters(), lr=5e-4)
         criterion = BCELoss().cuda()
 
         # Train the model
         print("Training the model...")
-        val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs)
+        val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs, early_stop=FLAGS.early_stopping)
         
         # Print loss, dice and iou history
         print("Dice history (val): ", val_dice_history)
@@ -67,7 +67,7 @@ def main(argv):
 
             # Train the model
             print("Training the model...")
-            val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs)
+            val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs, early_stop=FLAGS.early_stopping)
             
             # Print loss, dice and iou history
             print("Dice history (val): ", val_dice_history)
@@ -111,7 +111,7 @@ def main(argv):
         split_indices, test_loader = get_k_splits_test_set(dataset, FLAGS.nb_splits)
 
         # Perform k-fold cross validation
-        k_fold_cross_validation(dataset, split_indices, FLAGS.model, device, FLAGS.lr, epochs=FLAGS.epochs)
+        k_fold_cross_validation(dataset, split_indices, FLAGS.model, device, FLAGS.lr, epochs=FLAGS.epochs, early_stop=FLAGS.early_stopping)
 
 if __name__ == '__main__':
     # Command line arguments setup
@@ -119,6 +119,7 @@ if __name__ == '__main__':
     flags.DEFINE_enum('mode', 'basic', ['basic', 'learning_rate_comparison', 'k_fold_cross_validation'], '')
     flags.DEFINE_enum('model', 'Unet', ['Unet', 'UnetResNet', 'UnetResNext'], '')
     flags.DEFINE_integer('epochs', 50, "")
+    flags.DEFINE_integer('early_stopping', 7, "")
     flags.DEFINE_integer('nb_splits', 5, "")
     flags.DEFINE_float('lr', 1e-4, "")
 

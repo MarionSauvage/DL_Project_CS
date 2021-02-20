@@ -93,7 +93,7 @@ def get_predictions_data(model, device, test_loader):
 
     return predictions
 
-def train_segmentation(model, device, train_loader,val_loader, optimizer, criterion, epochs=20):
+def train_segmentation(model, device, train_loader,val_loader, optimizer, criterion, epochs=20, early_stop=7):
     # Training loss and dice lists
     loss_history = []
     dice_train_history = []
@@ -103,6 +103,11 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
     val_iou_history = []
     val_pixel_acc_history = []
     val_loss_history = []
+
+    # Early stopping initialization
+    n_epochs_stop = early_stop
+    epochs_no_improve = 0
+    min_val_loss = np.Inf
 
     for epoch in range(epochs):
         num_batches = 0
@@ -149,11 +154,25 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
         print("Dice (val): {:.1%}".format(val_dice))
         print("IoU (val): {:.1%}".format(val_iou))
         print("Pixel accuracy (val): {:.1%}".format(val_pixel_acc))
+
+        # Early stopping loss tracking
+        if val_loss < min_val_loss:
+            epochs_no_improve = 0
+            min_val_loss = val_loss
+        else:
+            epochs_no_improve += 1
+
+        if epoch >= 10 and epochs_no_improve >= n_epochs_stop:
+            print('Early stopping !')
+            print("Stopped")
+            break
+        else:
+            continue
         
     return val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history
 
 
-def k_fold_cross_validation(df, split_indices, model_name, device, lr, epochs=20):
+def k_fold_cross_validation(df, split_indices, model_name, device, lr, epochs=20, early_stop=7):
     # Metrics values for each run
     val_dice_list = []
     val_iou_list = []
@@ -173,7 +192,7 @@ def k_fold_cross_validation(df, split_indices, model_name, device, lr, epochs=20
         optimizer = Adam(model.parameters(), lr=lr)
         criterion = BCELoss().cuda()
 
-        val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=epochs)
+        val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=epochs, early_stop=early_stop)
 
         # Add last metric value to each list
         val_loss_list.append(val_loss_history[-1])
