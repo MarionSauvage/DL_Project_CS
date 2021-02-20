@@ -17,6 +17,14 @@ The images were obtained from The Cancer Imaging Archive (TCIA).
 They correspond to 110 patients included in The Cancer Genome Atlas (TCGA) lower-grade glioma collection with at least fluid-attenuated inversion recovery (FLAIR) sequence and genomic cluster data available.
 Tumor genomic clusters and patient data is provided in data.csv file.
 There is no API. It has to be uploaded manually.
+The dataset should be located outside this repo, with the following directory architecture:
+
+``` bash 
+├── dataset_mri
+│   └── lgg-mri-segmentation
+│       └── kaggle_3m 
+└── DL_Project_CS (a.k.a this repo)
+```
 
 <div style="text-align:center"><img src="images/dataset.png" width="60%"></div>
 
@@ -48,13 +56,15 @@ There is no API. It has to be uploaded manually.
 ├── main_segmentation.py
 ├── main_output_display.py
 ├── preprocessing.py
+├── requirements.txt
 └── .gitignore
 ```
 
 * In the **root** directory, we have :
    - `preprocessing.py` which is used to process the dataset before applying classification or segmentation codes. 
     - There is as well a `data_vizualisation.ipynb`, a jupyter notebook allowing to get a better understanding of the dataset.
-    - There 2 main files `main_classification.py`and `main_segmentation.py` which respectively allow to perform classification and segmentation on the dataset. 
+    - There 2 main files `main_classification.py`and `main_segmentation.py` which respectively allow to perform classification and segmentation on the dataset.
+    - `requirements.txt` that contains the libraries needed to run the code
 
 * In the **images** directory, one finds the images present in the README.
 
@@ -76,9 +86,9 @@ There is no API. It has to be uploaded manually.
 
 ## Requirements 
 
+The file ``requirements.txt`` in the root directory contains the list of libraries needed to run our code. You can install them using the command ``pip install -r requirements.txt``.
 
-
-## How tu run models with saved mdeols
+## How tu run models with saved models
 
 - Unet
 Excute : ``python ./main_output_display.py --model Unet``
@@ -89,6 +99,27 @@ Excute : ``python ./main_output_display.py --model UnetResNet``
 
 Reference mask and predictions for 20 examples: 
 <div style="text-align:center"><img src="images/predictions.png" width="100%"></div> 
+
+
+## How to run the training files for classification and segmentation
+
+* main_classification.py :
+    - Execute : ``python ./main_classification.py --mode [mode]``
+    - ``mode`` being one of the following
+        + ``basic``: standard training and test set evaluation
+        + ``optimizer_optimization``: optimization of the optimizer learning rate and momentum
+        + ``nn_layers_optimization``: optimization of the convolutional and fully connected layers
+* main_segmentation.py :
+    - Execute : ``python ./main_segmentation.py --mode [mode] --model [model] --epochs [epochs] --early-stopping [early-stopping] --nb_splits [nb_splits] --lr [lr] --display_predictions --save_model``
+    - ``mode``: choose wether you want to perform basic training, learning rate comparison, batch size testing or k-fold cross validation
+    - ``model`` being either ``Unet`` or ``UnetResNet``, depending on the model you want to train
+    - ``epochs``: number of epochs to train
+    - ``early-stopping``: number of epochs without loss improvement
+    - ``nb_splits``: number of splits for k-fold cross validation
+    - ``lr``: learning rate for the training
+    - ``display_predictions``: Display or not predictions on the testing set. Only with ``basic`` mode
+    - ``save_model``: Save or not the trained model. Only with ``basic`` mode
+
 
 ## Models
  
