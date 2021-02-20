@@ -113,6 +113,38 @@ def main(argv):
             print("Pixel accuracy (test): {:.1%}".format(pixel_acc_test))
             print("Loss (test): {:1.4f}".format(avg_loss_test))
     
+    elif FLAGS.mode == 'batch_size_comparison':
+        batch_list = [20, 40, 55, 70]
+        epochs = [i for i in range(FLAGS.epochs)]
+
+        # Model initialization
+        model = build_model(FLAGS.model)
+        optimizer = Adam(model.parameters(), lr=FLAGS.lr)
+        criterion = BCELoss().cuda()
+
+        for batch_size in batch_list:
+            # Get proper dataloader for the given batch_size
+            print("Batch size: ", batch_size)
+            train_loader,test_loader,val_loader=get_train_test_val_sets(dataset, batch_size=batch_size)
+
+            # Train the model
+            print("Training the model...")
+            val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs, early_stop=FLAGS.early_stopping)
+
+            # Print loss, dice and iou history
+            print("Dice history (val): ", val_dice_history)
+            print("IoU history (val): ", val_iou_history)
+            print("Pixel accuracy history (val): ", val_pixel_acc_history)
+            print("Loss history (val): ", val_loss_history)
+
+
+            # Performance evaluation on test data
+            avg_loss_test, dice_test, iou_test, pixel_acc_test = evaluate_model(model, device, test_loader, optimizer, criterion)
+            print("Dice (test): {:.1%}".format(dice_test))
+            print("IoU (test): {:.1%}".format(iou_test))
+            print("Pixel accuracy (test): {:.1%}".format(pixel_acc_test))
+            print("Loss (test): {:1.4f}".format(avg_loss_test))
+
     elif FLAGS.mode == 'k_fold_cross_validation':
         # Get split indices and test set loader
         split_indices, test_loader = get_k_splits_test_set(dataset, FLAGS.nb_splits)
@@ -123,7 +155,7 @@ def main(argv):
 if __name__ == '__main__':
     # Command line arguments setup
     FLAGS = flags.FLAGS
-    flags.DEFINE_enum('mode', 'basic', ['basic', 'learning_rate_comparison', 'k_fold_cross_validation'], '')
+    flags.DEFINE_enum('mode', 'basic', ['basic', 'learning_rate_comparison', 'batch_size_comparison', 'k_fold_cross_validation'], '')
     flags.DEFINE_enum('model', 'Unet', ['Unet', 'UnetResNet'], '')
     flags.DEFINE_integer('epochs', 50, '')
     flags.DEFINE_integer('early_stopping', 7, '')
