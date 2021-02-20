@@ -83,6 +83,10 @@ There is no API. It has to be uploaded manually.
 
 - UnetResnet
 
+## Outputs
+
+Reference mask and predictions for 20 examples: 
+<div style="text-align:center"><img src="images/predictions.png" width="100%"></div> 
 
 ## Models
  
