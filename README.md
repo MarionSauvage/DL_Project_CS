@@ -33,7 +33,11 @@ There is no API. It has to be uploaded manually.
 │   └── preprocessing_classification.py
 │── images
 │   ├── dataset.png
-│   └── unet_archi.png   
+│   ├── predictions.png
+│   └── unet_archi.png 
+│── models
+│   ├── unet_model.pt
+│   └── unetresnet_model.pt    
 ├── segmentation
 │   ├── preprocessing_segmentation.py
 │   ├── model_segmentation.py
@@ -42,6 +46,7 @@ There is no API. It has to be uploaded manually.
 ├── data_visualization.ipynb
 ├── main_classification.py
 ├── main_segmentation.py
+├── main_output_display.py
 ├── preprocessing.py
 └── .gitignore
 ```
@@ -51,7 +56,11 @@ There is no API. It has to be uploaded manually.
     - There is as well a `data_vizualisation.ipynb`, a jupyter notebook allowing to get a better understanding of the dataset.
     - There 2 main files `main_classification.py`and `main_segmentation.py` which respectively allow to perform classification and segmentation on the dataset. 
 
-* In the **images** directory, one find the images present in the README.
+* In the **images** directory, one finds the images present in the README.
+
+* In the **models** directory, one finds :
+    - `` unet_model.pt`` : saved model for 'UNET
+    -  ``unetresnet_model.pt``  : saved model for 'UnetResnet'
 
 * In **classification** directory :
     - ``classification.py`` : train and validation functions for the network
@@ -69,13 +78,27 @@ There is no API. It has to be uploaded manually.
 
 
 
+## How tu run models with saved mdeols
+
+- Unet
+Excute : ``python ./main_output_display.py --model Unet``
+
+- UnetResnet 
+Excute : ``python ./main_output_display.py --model UnetResNet``
+## Outputs
+
+Reference mask and predictions for 20 examples: 
+<div style="text-align:center"><img src="images/predictions.png" width="100%"></div> 
+
 ## Models
  
 * for classification we used a convolutional neural network (CNN) 
 
 * for segmentation we used a UNET architecture described below 
 
-<div style="text-align:center"><img src="images/unet_archi.png" width="60%">
+<div style="text-align:center"><img src="images/unet_archi.png" width="40%">
 
 
 Source : https://becominghuman.ai/implementing-unet-in-pytorch-8c7e05a121b4 </div> 
+
+
