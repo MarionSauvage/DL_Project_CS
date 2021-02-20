@@ -4,7 +4,7 @@ from segmentation.result_display import display_predictions, display_predictions
 from segmentation.model_segmentation import build_model
 from preprocessing import load_dataset
 from segmentation.preprocessing_segmentation import get_train_test_val_sets
-from segmentation.segmentation import  get_predictions_data
+from segmentation.segmentation import get_predictions_data, evaluate_model
 from absl import app, flags
 import matplotlib.pyplot as plt
 
