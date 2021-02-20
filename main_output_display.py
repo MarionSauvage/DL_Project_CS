@@ -12,9 +12,9 @@ PATH="C:/Users/mario/Documents/cpu_unetresnet_model.pt"
 def main(argv):
     torch.manual_seed(42)
     if FLAGS.model == 'Unet':
-        PATH="models/unet_model.pt"
+        PATH="models/Unet_model.pt"
     elif  FLAGS.model == 'UnetResNet': 
-        PATH="models/unetresnet_model.pt"
+        PATH="models/UnetResNet_model.pt"
 
     #data import
     DATA_PATH="../dataset_mri/lgg-mri-segmentation/kaggle_3m/"
