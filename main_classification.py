@@ -33,11 +33,14 @@ def main(argv):
 
         # Train the model
         print("Training the model...")
-        train_classification(model, device, train_loader, val_loader, optimizer, criterion, epochs=20)
+        val_acc, val_f1_score = train_classification(model, device, train_loader, val_loader, optimizer, criterion, epochs=20)
+        print("Accuracy (val): {:.1%}".format(val_acc))
+        print("F1-score (val): {:.1%}".format(val_f1_score))
 
         # Performance evaluation on test data
-        loss, accuracy = evaluate_model(model, device, test_loader, optimizer, criterion)
+        loss, accuracy, f1_score = evaluate_model(model, device, test_loader, optimizer, criterion)
         print("Accuracy (test): {:.1%}".format(accuracy))
+        print("F1-score (test): {:.1%}".format(f1_score))
 
     #### Hyperparameters selection ####
     elif FLAGS.mode == 'optimizer_optimization':
