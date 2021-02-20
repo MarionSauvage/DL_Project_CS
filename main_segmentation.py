@@ -1,7 +1,7 @@
 from preprocessing import load_dataset
-from segmentation.preprocessing_segmentation import get_train_test_val_sets
+from segmentation.preprocessing_segmentation import get_train_test_val_sets, get_k_splits_test_set
 from segmentation.model_segmentation import build_model
-from segmentation.segmentation import train_segmentation, evaluate_model, get_predictions_data
+from segmentation.segmentation import train_segmentation, evaluate_model, get_predictions_data, k_fold_cross_validation
 from segmentation.result_display import *
 import torch
 from torch.optim import Adam, SGD
@@ -30,12 +30,12 @@ def main(argv):
         print(model)
 
         # defining the optimizer and loss function
-        optimizer = Adam(model.parameters(), lr=1e-4)
+        optimizer = Adam(model.parameters(), lr=5e-4)
         criterion = BCELoss().cuda()
 
         # Train the model
         print("Training the model...")
-        val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs)
+        val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs, early_stop=FLAGS.early_stopping)
         
         # Print loss, dice and iou history
         print("Dice history (val): ", val_dice_history)
@@ -67,7 +67,7 @@ def main(argv):
 
             # Train the model
             print("Training the model...")
-            val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs)
+            val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=FLAGS.epochs, early_stop=FLAGS.early_stopping)
             
             # Print loss, dice and iou history
             print("Dice history (val): ", val_dice_history)
@@ -105,12 +105,22 @@ def main(argv):
             print("IoU (test): {:.1%}".format(iou_test))
             print("Pixel accuracy (test): {:.1%}".format(pixel_acc_test))
             print("Loss (test): {:1.4f}".format(avg_loss_test))
+    
+    elif FLAGS.mode == 'k_fold_cross_validation':
+        # Get split indices and test set loader
+        split_indices, test_loader = get_k_splits_test_set(dataset, FLAGS.nb_splits)
+
+        # Perform k-fold cross validation
+        k_fold_cross_validation(dataset, split_indices, FLAGS.model, device, FLAGS.lr, epochs=FLAGS.epochs, early_stop=FLAGS.early_stopping)
 
 if __name__ == '__main__':
     # Command line arguments setup
     FLAGS = flags.FLAGS
-    flags.DEFINE_enum('mode', 'basic', ['basic', 'learning_rate_comparison'], '')
+    flags.DEFINE_enum('mode', 'basic', ['basic', 'learning_rate_comparison', 'k_fold_cross_validation'], '')
     flags.DEFINE_enum('model', 'Unet', ['Unet', 'UnetResNet', 'UnetResNext'], '')
     flags.DEFINE_integer('epochs', 50, "")
+    flags.DEFINE_integer('early_stopping', 7, "")
+    flags.DEFINE_integer('nb_splits', 5, "")
+    flags.DEFINE_float('lr', 1e-4, "")
 
     app.run(main)

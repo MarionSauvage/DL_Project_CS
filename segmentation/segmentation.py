@@ -1,7 +1,10 @@
 import numpy as np
 import torch
 from torch.autograd import Variable
-#from ray import tune
+from torch.optim import Adam
+from torch.nn import BCELoss
+from segmentation.preprocessing_segmentation import get_train_val_splits_set
+from segmentation.model_segmentation import build_model
 
 # metrics
 def compute_dice(inputs, target):
@@ -90,7 +93,7 @@ def get_predictions_data(model, device, test_loader):
 
     return predictions
 
-def train_segmentation(model, device, train_loader,val_loader, optimizer, criterion, epochs=20):
+def train_segmentation(model, device, train_loader,val_loader, optimizer, criterion, epochs=20, early_stop=7):
     # Training loss and dice lists
     loss_history = []
     dice_train_history = []
@@ -100,6 +103,11 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
     val_iou_history = []
     val_pixel_acc_history = []
     val_loss_history = []
+
+    # Early stopping initialization
+    n_epochs_stop = early_stop
+    epochs_no_improve = 0
+    min_val_loss = np.Inf
 
     for epoch in range(epochs):
         num_batches = 0
@@ -146,5 +154,66 @@ def train_segmentation(model, device, train_loader,val_loader, optimizer, criter
         print("Dice (val): {:.1%}".format(val_dice))
         print("IoU (val): {:.1%}".format(val_iou))
         print("Pixel accuracy (val): {:.1%}".format(val_pixel_acc))
+
+        # Early stopping loss tracking
+        if val_loss < min_val_loss:
+            epochs_no_improve = 0
+            min_val_loss = val_loss
+        else:
+            epochs_no_improve += 1
+
+        if epoch >= 10 and epochs_no_improve >= n_epochs_stop:
+            print('Early stopping !')
+            print("Stopped")
+            break
+        else:
+            continue
         
     return val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history
+
+
+def k_fold_cross_validation(df, split_indices, model_name, device, lr, epochs=20, early_stop=7):
+    # Metrics values for each run
+    val_dice_list = []
+    val_iou_list = []
+    val_pixel_acc_list = []
+    val_loss_list = []
+
+    for train_indices, val_indices in split_indices:
+        print("Training number", len(val_dice_list))
+        # Get train and validation set loaders
+        train_loader, val_loader = get_train_val_splits_set(df, train_indices, val_indices)
+
+        # Model initialization
+        model = build_model(model_name)
+
+        # Defining the optimizer and loss function
+        print("Learning rate: ", lr)
+        optimizer = Adam(model.parameters(), lr=lr)
+        criterion = BCELoss().cuda()
+
+        val_loss_history, val_dice_history, val_iou_history, val_pixel_acc_history = train_segmentation(model=model, device=device, train_loader=train_loader, val_loader=val_loader, optimizer=optimizer, criterion=criterion, epochs=epochs, early_stop=early_stop)
+
+        # Add last metric value to each list
+        val_loss_list.append(val_loss_history[-1])
+        val_dice_list.append(val_dice_history[-1])
+        val_iou_list.append(val_iou_history[-1])
+        val_pixel_acc_list.append(val_pixel_acc_history[-1])
+    
+
+    # Compute averages
+    nb_folds = len(val_loss_list)
+    avg_val_loss = sum(val_loss_list) / nb_folds
+    avg_val_dice = sum(val_dice_list) / nb_folds
+    avg_val_iou = sum(val_iou_list) / nb_folds
+    avg_val_pixel_acc = sum(val_pixel_acc_list) / nb_folds
+
+    # Display results
+    print("List of validation loss: ", val_loss_list)
+    print("List of validation dice: ", val_dice_list)
+    print("List of validation IoU: ", val_iou_list)
+    print("List of validation pixel accuracy: ", val_pixel_acc_list)
+    print("Average validation loss: {:1.4f}".format(avg_val_loss))
+    print("Average validation dice: {:.1f}%".format(avg_val_dice))
+    print("Average validation IoU: {:.1f}%".format(avg_val_iou))
+    print("Average validation pixel accuracy: {:.1f}%".format(avg_val_pixel_acc))

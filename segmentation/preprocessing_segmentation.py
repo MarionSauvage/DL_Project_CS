@@ -18,7 +18,7 @@ import torchvision
 import torchvision.transforms as T
 from albumentations.pytorch import ToTensor, ToTensorV2
 from PIL import Image
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold
 from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, models, transforms
 
@@ -98,3 +98,53 @@ def get_train_test_val_sets(df, data_aug_transforms=data_aug_transforms, test_tr
     test_dataset = BrainMriDataset(df=test_df, transforms=test_transforms)
     test_dataloader = DataLoader(test_dataset, batch_size=20, num_workers=4, shuffle=True)
     return train_dataloader,test_dataloader,val_dataloader
+
+def get_k_splits_test_set(df, n_splits=5, test_transforms=test_transforms):
+    """ Prepare dataset for k-fold cross-validation
+    Keyword arguments:
+        df                  -- given by the "load_dataset" function
+        n_splits            -- number of folds to split the dataset
+        test_transforms     -- transforms object for the test dataloader
+    Return: k-folds indices, test set loader 
+    """
+
+    # Split df into train+val dataset and test_df
+    train_val_df, test_df = train_test_split(df, stratify=df.tumor, test_size=0.15, random_state=42)
+    train_val_df = train_val_df.reset_index(drop=True)
+    test_df = test_df.reset_index(drop=True)
+
+    # Get split indices for k-fold cross-validation
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
+    split_indices = kf.split(train_val_df)
+
+    # Get test dataloader
+    test_dataset = BrainMriDataset(df=test_df, transforms=test_transforms)
+    test_dataloader = DataLoader(test_dataset, batch_size=20, num_workers=4, shuffle=True)
+
+    return split_indices, test_dataloader
+
+
+def get_train_val_splits_set(df, train_indices, val_indices, data_aug_transforms=data_aug_transforms):
+    """ Get train and validation loaders
+    Keyword arguments:
+        df                  -- given by the "load_dataset" function
+        train_indices       -- indices for a given train split
+        val_indices         -- indices for the corresponding validation split
+        data_aug_transforms -- transforms object for the train and validation dataloaders
+    Return: train, val sets loaders 
+    """
+    # Get train and validation datasets
+    train_df = df.iloc[list(train_indices)]
+    val_df = df.iloc[list(val_indices)]
+    train_df = train_df.reset_index(drop=True)
+    val_df = val_df.reset_index(drop=True)
+
+    # Get train set loader
+    train_dataset = BrainMriDataset(df=train_df, transforms=data_aug_transforms)
+    train_dataloader = DataLoader(train_dataset, batch_size=20, num_workers=4, shuffle=True)
+
+    # Get validation set loader
+    val_dataset = BrainMriDataset(df=val_df, transforms=data_aug_transforms)
+    val_dataloader = DataLoader(val_dataset, batch_size=20, num_workers=4, shuffle=True)
+
+    return train_dataloader, val_dataloader
