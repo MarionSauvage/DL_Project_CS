@@ -79,10 +79,11 @@ There is no API. It has to be uploaded manually.
 
 ## How tu run models with saved mdeols
 
-- Unet 
+- Unet
+Excute : ``python .\main_output_display.py --model Unet``
 
-- UnetResnet
-
+- UnetResnet 
+Excute : ``python .\main_output_display.py --model UnetResNet``
 ## Outputs
 
 Reference mask and predictions for 20 examples: 
