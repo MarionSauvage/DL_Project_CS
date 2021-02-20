@@ -30,7 +30,7 @@ def main(argv):
         print(model)
 
         # defining the optimizer and loss function
-        optimizer = Adam(model.parameters(), lr=5e-4)
+        optimizer = Adam(model.parameters(), lr=FLAGS.lr)
         criterion = BCELoss().cuda()
 
         # Train the model
