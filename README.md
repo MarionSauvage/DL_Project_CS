@@ -17,6 +17,14 @@ The images were obtained from The Cancer Imaging Archive (TCIA).
 They correspond to 110 patients included in The Cancer Genome Atlas (TCGA) lower-grade glioma collection with at least fluid-attenuated inversion recovery (FLAIR) sequence and genomic cluster data available.
 Tumor genomic clusters and patient data is provided in data.csv file.
 There is no API. It has to be uploaded manually.
+The dataset should be located outside this repo, with the following directory architecture:
+
+``` bash 
+├── dataset_mri
+│   └── lgg-mri-segmentation
+│       └── kaggle_3m 
+└── DL_Project_CS (a.k.a this repo)
+```
 
 <div style="text-align:center"><img src="images/dataset.png" width="60%"></div>
 
@@ -48,13 +56,15 @@ There is no API. It has to be uploaded manually.
 ├── main_segmentation.py
 ├── main_output_display.py
 ├── preprocessing.py
+├── requirements.txt
 └── .gitignore
 ```
 
 * In the **root** directory, we have :
    - `preprocessing.py` which is used to process the dataset before applying classification or segmentation codes. 
     - There is as well a `data_vizualisation.ipynb`, a jupyter notebook allowing to get a better understanding of the dataset.
-    - There 2 main files `main_classification.py`and `main_segmentation.py` which respectively allow to perform classification and segmentation on the dataset. 
+    - There 2 main files `main_classification.py`and `main_segmentation.py` which respectively allow to perform classification and segmentation on the dataset.
+    - `requirements.txt` that contains the libraries needed to run the code
 
 * In the **images** directory, one finds the images present in the README.
 
@@ -76,7 +86,7 @@ There is no API. It has to be uploaded manually.
 
 ## Requirements 
 
-
+The file ``requirements.txt`` in the root directory contains the list of libraries needed to run our code. You can install them using the command ``pip install -r requirements.txt``.
 
 ## How tu run models with saved models
 
