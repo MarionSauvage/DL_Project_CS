@@ -33,6 +33,7 @@ There is no API. It has to be uploaded manually.
 │   └── preprocessing_classification.py
 │── images
 │   ├── dataset.png
+│   ├── predictions.png
 │   └── unet_archi.png 
 │── models
 │   ├── unet_model.pt
