@@ -69,7 +69,7 @@ class BrainMriDataset(Dataset):
         
         return augmented
 
-def get_train_test_val_sets(df, data_aug_transforms=data_aug_transforms, test_transforms=test_transforms):
+def get_train_test_val_sets(df, data_aug_transforms=data_aug_transforms, test_transforms=test_transforms, batch_size=20):
     """Prepare dataset
     Keyword arguments:
     global_dataframe -- given by the "load_dataset" function
@@ -88,15 +88,15 @@ def get_train_test_val_sets(df, data_aug_transforms=data_aug_transforms, test_tr
     
     # train
     train_dataset = BrainMriDataset(df=train_df, transforms=data_aug_transforms)
-    train_dataloader = DataLoader(train_dataset, batch_size=20, num_workers=4, shuffle=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, num_workers=4, shuffle=True)
 
     # val
     val_dataset = BrainMriDataset(df=val_df, transforms=data_aug_transforms)
-    val_dataloader = DataLoader(val_dataset, batch_size=20, num_workers=4, shuffle=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=batch_size, num_workers=4, shuffle=True)
 
     #test
     test_dataset = BrainMriDataset(df=test_df, transforms=test_transforms)
-    test_dataloader = DataLoader(test_dataset, batch_size=20, num_workers=4, shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, num_workers=4, shuffle=True)
     return train_dataloader,test_dataloader,val_dataloader
 
 def get_k_splits_test_set(df, n_splits=5, test_transforms=test_transforms):
