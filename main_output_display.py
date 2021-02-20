@@ -7,7 +7,7 @@ from segmentation.segmentation import  get_predictions_data
 from absl import app, flags
 import matplotlib.pyplot as plt
 
-PATH="C:/Users/mario/Documents/unetresnet_model.pt"
+PATH="C:/Users/mario/Documents/cpu_unetresnet_model.pt"
 
 def main(argv):
     torch.manual_seed(42)
