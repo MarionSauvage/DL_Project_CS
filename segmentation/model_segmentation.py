@@ -6,9 +6,7 @@ from torch.optim import Adam, SGD
 from torchvision import models
 from torchvision.models import resnext50_32x4d, resnet18
 
-
 resnet_backbone = resnet18(pretrained=True)
-resnext_backbone = resnext50_32x4d(pretrained=True)
 
 def DoubleConv(in_channels, out_channels):
     return nn.Sequential(
@@ -106,56 +104,6 @@ class UnetResNet(nn.Module):
         x = self.conv_right1(x)
         x = self.upsample(x)
 
-        out = self.last_conv(x)
-        out = torch.sigmoid(out)
-        return out
-
-
-class UnetResNext(nn.Module):
-    def __init__(self,nb_classes=1):
-        super().__init__()
-
-        ## Resnet backbone 
-        self.base_model = backbone
-        self.base_layers = list(backbone.children())  
-
-        #Left side of UNET : Sequential NN
-        self.block_left1 = nn.Sequential(*self.base_layers[:4])
-        self.block_left2 = nn.Sequential(*self.base_layers[5])
-        self.block_left3 = nn.Sequential(*self.base_layers[6])
-        self.block_left4 = nn.Sequential(*self.base_layers[7])    
-
-        self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)        
-        #Right side of UNET :
-        self.conv_right3 = DoubleConv(256 + 512, 256)
-        self.conv_right2 = DoubleConv(128 + 256, 128)
-        self.conv_right1 = DoubleConv(128 + 64, 64)
-        
-        self.last_conv = nn.Conv2d(64, nb_classes, kernel_size=1)
-        # Final Classifier
-        self.last_conv0 = ConvRelu(128, 64, 3, 1)
-
-
-    def forward(self,x):
-        #ENCODER BLOCK
-        block1 = self.block_left1(x)
-        block2 = self.block_left2(block1)
-        block3 = self.block_left3(block2)
-        block4 = self.block_left4(block3)
-        ##DECODER BLOCK
-        x = self.upsample(block4)
-        x = torch.cat([x, block3], dim=1)
-        x = self.conv_right3(x)
-
-        x = self.upsample(x)
-        x = torch.cat([x, block2], dim=1)
-        x = self.conv_right2(x)
-
-        x = self.upsample(x)
-        x = torch.cat([x, block1], dim=1)
-        x = self.conv_right1(x)
-        
-        x = self.upsample(x)
         out = self.last_conv(x)
         out = torch.sigmoid(out)
         return out
