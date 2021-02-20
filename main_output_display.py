@@ -11,6 +11,10 @@ PATH="C:/Users/mario/Documents/cpu_unetresnet_model.pt"
 
 def main(argv):
     torch.manual_seed(42)
+    if FLAGS.model == 'Unet':
+        PATH="models/unet_model.pt"
+    elif  FLAGS.model == 'UnetResNet': 
+        PATH="models/unetresnet_model.pt"
 
     #data import
     DATA_PATH="../dataset_mri/lgg-mri-segmentation/kaggle_3m/"
@@ -31,5 +35,5 @@ def main(argv):
 
 if __name__ == '__main__':
     FLAGS = flags.FLAGS
-    flags.DEFINE_enum('model', 'Unet', ['Unet', 'UnetResNet', 'UnetResNext'], '')
+    flags.DEFINE_enum('model', 'Unet', ['Unet', 'UnetResNet'], '')
     app.run(main)
