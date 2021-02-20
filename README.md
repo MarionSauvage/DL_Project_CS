@@ -78,7 +78,7 @@ There is no API. It has to be uploaded manually.
 
 
 
-## How tu run models with saved mdeols
+## How tu run models with saved models
 
 - Unet
 Excute : ``python ./main_output_display.py --model Unet``
@@ -89,6 +89,27 @@ Excute : ``python ./main_output_display.py --model UnetResNet``
 
 Reference mask and predictions for 20 examples: 
 <div style="text-align:center"><img src="images/predictions.png" width="100%"></div> 
+
+
+## How to run the training files for classification and segmentation
+
+* main_classification.py :
+    - Execute : ``python ./main_classification.py --mode [mode]``
+    - ``mode`` being one of the following
+        + ``basic``: standard training and test set evaluation
+        + ``optimizer_optimization``: optimization of the optimizer learning rate and momentum
+        + ``nn_layers_optimization``: optimization of the convolutional and fully connected layers
+* main_segmentation.py :
+    - Execute : ``python ./main_segmentation.py --mode [mode] --model [model] --epochs [epochs] --early-stopping [early-stopping] --nb_splits [nb_splits] --lr [lr] --display_predictions --save_model``
+    - ``mode``: choose wether you want to perform basic training, learning rate comparison, batch size testing or k-fold cross validation
+    - ``model`` being either ``Unet`` or ``UnetResNet``, depending on the model you want to train
+    - ``epochs``: number of epochs to train
+    - ``early-stopping``: number of epochs without loss improvement
+    - ``nb_splits``: number of splits for k-fold cross validation
+    - ``lr``: learning rate for the training
+    - ``display_predictions``: Display or not predictions on the testing set. Only with ``basic`` mode
+    - ``save_model``: Save or not the trained model. Only with ``basic`` mode
+
 
 ## Models
  
