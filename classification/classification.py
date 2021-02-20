@@ -1,11 +1,17 @@
+import numpy as np
 import torch
 from torch.autograd import Variable
+from sklearn.metrics import f1_score
 from classification import *
 
 
 def evaluate_model(model, device, dataloader, optimizer, criterion):
     avg_accuracy = 0
     avg_loss = 0.0
+
+    # numpy arrays to compute the f1-score
+    preds_array = np.empty(0, dtype=np.int64)
+    targets_array = np.empty(0, dtype=np.int64)
 
     model.eval()
     with torch.no_grad():
@@ -18,10 +24,13 @@ def evaluate_model(model, device, dataloader, optimizer, criterion):
             _, predictions = torch.max(out, 1)
             nb_correct = torch.sum(predictions == targets)
 
+            preds_array = np.concatenate((preds_array, predictions.cpu().detach().numpy()))
+            targets_array = np.concatenate((targets_array, targets.cpu().detach().numpy()))
+
             avg_loss += loss.item()
             avg_accuracy += nb_correct
     
-    return avg_loss / len(dataloader.dataset), float(avg_accuracy) / len(dataloader.dataset)
+    return avg_loss / len(dataloader.dataset), float(avg_accuracy) / len(dataloader.dataset), f1_score(targets_array, preds_array)
 
 
 def train_classification(model, device, train_dataloader, val_dataloader, optimizer, criterion, epochs=20):
@@ -40,12 +49,12 @@ def train_classification(model, device, train_dataloader, val_dataloader, optimi
             optimizer.step()
 
             if batch_idx % 20 == 0:
-                val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
-                print('epoch {} batch {}  [{}/{}] training loss: {:1.4f} \tvalidation loss: {:1.4f}\tAccuracy (val): {:.1%}'.format(epoch,batch_idx,batch_idx*len(x),
-                        len(train_dataloader.dataset),loss.item(), val_loss, accuracy))
+                val_loss, val_acc, val_f1_score = evaluate_model(model, device, val_dataloader, optimizer, criterion)
+                print('epoch {} batch {}  [{}/{}] training loss: {:1.4f} \tvalidation loss: {:1.4f}\tAccuracy (val): {:.1%}\tF1-score (val): {:.1%}'.format(epoch,batch_idx,batch_idx*len(x),
+                        len(train_dataloader.dataset),loss.item(), val_loss, val_acc, val_f1_score))
     
     # Get the last validation accuracy
-    val_loss, accuracy = evaluate_model(model, device, val_dataloader, optimizer, criterion)
+    val_loss, val_acc, val_f1_score = evaluate_model(model, device, val_dataloader, optimizer, criterion)
 
-    return accuracy
+    return val_acc, val_f1_score
 

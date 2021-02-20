@@ -3,9 +3,9 @@ import torch
 from torch.autograd import Variable
 from ray import tune
 from preprocessing import load_dataset
-from preprocessing_for_classification import *
-from classification import *
-from model_classifier import *
+from classification.preprocessing_for_classification import *
+from classification.classification import *
+from classification.model_classifier import *
 
 # Path to all data
 DATA_PATH = "../dataset_mri/lgg-mri-segmentation/kaggle_3m/"
@@ -29,7 +29,7 @@ def hyperparam_optimizer(config):
     optimizer = SGD(model.parameters(), lr=config['lr'], momentum=config['momentum'])
 
     while True:
-        accuracy = train_classification(model, device, train_dataloader, val_dataloader, optimizer, criterion, epochs=20)
+        accuracy, f1_score = train_classification(model, device, train_dataloader, val_dataloader, optimizer, criterion, epochs=20)
 
         # Run tune
         tune.report(avg_accuracy=accuracy)
@@ -53,7 +53,7 @@ def hyperparam_nn_layers(config):
 
 
     while True:
-        accuracy = train_classification(model, device, train_dataloader, val_dataloader, optimizer, criterion, epochs=20)
+        accuracy, f1_score = train_classification(model, device, train_dataloader, val_dataloader, optimizer, criterion, epochs=20)
 
         # Run tune
         tune.report(avg_accuracy=accuracy)
