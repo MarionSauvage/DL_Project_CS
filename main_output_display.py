@@ -32,7 +32,7 @@ def main(argv):
     model.load_state_dict(torch.load(PATH), strict=False)
     model.eval()
     predictions = get_predictions_data(model, device, test_loader)
-    display_predictions2(predictions)
+    display_predictions_20(predictions)
 
 if __name__ == '__main__':
     FLAGS = flags.FLAGS

@@ -13,7 +13,7 @@ def display_predictions(predictions):
         plt.show()
 
 
-def display_predictions2(predictions):
+def display_predictions_20(predictions):
     fig=plt.figure(figsize=(50,50))
     outer=gridspec.GridSpec(5,4,wspace=0.2,hspace=0.2)
     for i in range(20):
@@ -25,5 +25,4 @@ def display_predictions2(predictions):
             ax.set_xticks([])
             ax.set_yticks([])
             fig.add_subplot(ax)
-
     plt.show() 
