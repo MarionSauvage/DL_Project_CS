@@ -1,5 +1,5 @@
 import torch
-from segmentation.result_display import display_predictions
+from segmentation.result_display import display_predictions, display_predictions2
 from segmentation.model_segmentation import build_model
 from preprocessing import load_dataset
 from segmentation.preprocessing_segmentation import get_train_test_val_sets
@@ -14,7 +14,8 @@ def main(argv):
     if FLAGS.model == 'Unet':
         PATH="models/Unet_model.pt"
     elif  FLAGS.model == 'UnetResNet': 
-        PATH="models/UnetResNet_model.pt"
+        PATH="C:/Users/mario/Documents/cpu_unetresnet_model.pt"
+        # PATH="models/UnetResNet_model.pt"
 
     #data import
     DATA_PATH="../dataset_mri/lgg-mri-segmentation/kaggle_3m/"
@@ -31,7 +32,7 @@ def main(argv):
     model.load_state_dict(torch.load(PATH), strict=False)
     model.eval()
     predictions = get_predictions_data(model, device, test_loader)
-    display_predictions(predictions)
+    display_predictions2(predictions)
 
 if __name__ == '__main__':
     FLAGS = flags.FLAGS
