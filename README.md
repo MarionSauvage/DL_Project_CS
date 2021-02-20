@@ -59,7 +59,7 @@ There is no API. It has to be uploaded manually.
 * In the **images** directory, one finds the images present in the README.
 
 * In the **models** directory, one finds :
-    - `` unet_model.pt`` : saved for model for 'UNET
+    - `` unet_model.pt`` : saved model for 'UNET
     -  ``unetresnet_model.pt``  : saved model for 'UnetResnet'
 
 * In **classification** directory :
@@ -81,10 +81,10 @@ There is no API. It has to be uploaded manually.
 ## How tu run models with saved mdeols
 
 - Unet
-Excute : ``python .\main_output_display.py --model Unet``
+Excute : ``python ./main_output_display.py --model Unet``
 
 - UnetResnet 
-Excute : ``python .\main_output_display.py --model UnetResNet``
+Excute : ``python ./main_output_display.py --model UnetResNet``
 ## Outputs
 
 Reference mask and predictions for 20 examples: 
