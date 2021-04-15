@@ -51,9 +51,15 @@ The dataset should be located outside this repo, with the following directory ar
 │   ├── model_segmentation.py
 │   ├── result_display.py
 │   └── segmentation.py
+├── segmentation_kmeans
+│   ├── preprocessing_segmentation.py
+│   ├── model_segmentation.py
+│   ├── result_display.py
+│   └── segmentation.py
 ├── data_visualization.ipynb
 ├── main_classification.py
 ├── main_segmentation.py
+├── main_segmentation_kmeans.py
 ├── main_output_display.py
 ├── preprocessing.py
 ├── requirements.txt
@@ -83,6 +89,17 @@ The dataset should be located outside this repo, with the following directory ar
     - ``model_segmentation.py`` : models architecture (U-Nets)
     - ``result_display.py`` : function to display predictions 
     - ``segmentation.py`` : train and validation functions for the network
+
+* In **segmentation_kmeans** directory :
+    - ``preprocessing_segmentation.py`` :  preprocessing to obtain a pytorch formated dataset for training with masks 
+    - ``model_segmentation.py`` : models architecture (U-Nets)
+    - ``result_display.py`` : function to display predictions 
+    - ``segmentation.py`` : train and validation functions for the network
+
+## Computer vision approach
+
+- ``skull_stripping.ipynb`` : notebook showing our work on skull stripping and images preprocessing
+- ``segmentation_kmeans.ipynb`` : notebook describing k-means segmentation experiments 
 
 ## Requirements 
 
