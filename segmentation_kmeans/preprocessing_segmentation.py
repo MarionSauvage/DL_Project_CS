@@ -43,20 +43,6 @@ test_transforms = A.Compose([
     ToTensor(),
 ])
 
-
-## Pre-processing kmeans 
-def segmentation_kmeans(img, K=5):
-    img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-    vectorized = img.reshape((-1,3))
-    vectorized = np.float32(vectorized)
-    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-    attempts=10
-    ret,label,center=cv2.kmeans(vectorized,K,None,criteria,attempts,cv2.KMEANS_PP_CENTERS)
-    center = np.uint8(center)
-    res = center[label.flatten()]
-    result_image = res.reshape((img.shape))
-    return result_image
-
 # Dataset preparation for training
 class BrainMriDataset(Dataset):
     def __init__(self, df, transforms):
@@ -75,9 +61,8 @@ class BrainMriDataset(Dataset):
         - label 
 
         """
-        image = cv2.imread(self.df.iloc[idx, 1])
-        image = segmentation_kmeans(image,5)
-        mask = cv2.imread(self.df.iloc[idx, 3], 0)
+        image = cv2.imread(self.df.iloc[idx, 3])
+        mask = cv2.imread(self.df.iloc[idx, 1], 0)
         #We take into account the mask
         augmented = self.transforms(image=image,mask=mask)
         

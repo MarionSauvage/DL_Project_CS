@@ -1,4 +1,4 @@
-from preprocessing import load_dataset
+from preprocessing_kmeans import load_dataset
 from segmentation_kmeans.preprocessing_segmentation import get_train_test_val_sets, get_k_splits_test_set
 from segmentation_kmeans.model_segmentation import build_model
 from segmentation_kmeans.segmentation import train_segmentation, evaluate_model, get_predictions_data, k_fold_cross_validation
@@ -15,7 +15,7 @@ def main(argv):
     torch.manual_seed(42)
 
     #data import
-    DATA_PATH="../dataset_mri/lgg-mri-segmentation/kaggle_3m/"
+    DATA_PATH="../dataset_mri/lgg-mri-segmentation_kmeans_preprocessed/kaggle_3m/"
     dataset=load_dataset(DATA_PATH)
     print(dataset.head())
 
@@ -58,7 +58,7 @@ def main(argv):
         if FLAGS.save_model:
             print("Saving model...")
             model.to('cpu')
-            torch.save(model.state_dict(), './models/' + FLAGS.model + '_model.pt')
+            torch.save(model.state_dict(), './models/' + FLAGS.model + '_model_kmeans.pt')
 
     elif FLAGS.mode == 'learning_rate_comparison':
         lr_list = [1e-4]
